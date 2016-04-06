@@ -21,6 +21,13 @@ type exprC = NumC of float
             | CompC of string * exprC * exprC
             | EqC of exprC * exprC
 
+type exprT = NumT of float
+            | BoolT of bool
+            | IfT of exprT * exprT * exprT
+            | ArithT of string * exprT * exprT
+            | CompT of string * exprT * exprT
+            | EqT of exprT * exprT
+
 (* You will need to add more cases here. *)
 type value = Num of float
             | Bool of bool
@@ -71,6 +78,17 @@ let eqEval x y =
   | (Bool a, Bool b) -> Bool (a = b)
   | (Num a, Num b) -> Bool (a = b)
   | _ -> Bool false
+
+
+(* Type-Checker *)
+let rec typecheck env exp = match exp with
+  | NumC i -> NumT i
+  | BoolC b -> BoolT b
+  | IfC (a, b, c) -> 
+  | ArithC (a, x, y) ->
+  | CompC (a, x, y) ->
+  | EqC (x, y) ->
+
 
 (* INTERPRETER *)
 

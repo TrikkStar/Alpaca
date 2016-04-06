@@ -19,6 +19,13 @@ type exprC = NumC of float
             | CompC of string * exprC * exprC
             | EqC of exprC * exprC
 
+type exprT = NumT of float
+            | BoolT of bool
+            | IfT of exprT * exprT * exprT
+            | ArithT of string * exprT * exprT
+            | CompT of string * exprT * exprT
+            | EqT of exprT * exprT
+
 type value = Num of float
             | Bool of bool
 
@@ -27,6 +34,9 @@ type 'a env
 val empty : 'a env
 val lookup : string -> 'a env -> 'a option
 val bind :  string -> 'a -> 'a env -> 'a env
+
+(* typechecking*)
+val typecheck : exprC -> exprT
 
 (* Interpreter steps *)
 val desugar : exprS -> exprC
