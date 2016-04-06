@@ -8,6 +8,7 @@ A statically-typed functional language developed by Noah Thederahn and Dalton Mc
 - `ocamllex lexer.mll`
 - `ocamlc -c types.mli parser.mli lexer.ml parser.ml types.ml driver.ml`
 - `ocamlc -o lang lexer.cmo parser.cmo types.cmo driver.cmo`
+  - On Windows use `lang.exe` then run `lang`
 - `./lang`
 
 You can use it interactively as above. Or you can write a "program" in any file, then run it as input to the interpreter by:
