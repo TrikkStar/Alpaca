@@ -1,9 +1,8 @@
 *.cmi
 *.cmo
-interpreter/lexer.ml
-interpreter/parser.ml
-interpreter/parser.mli
-interpreter/lang
+Alpaca/lexer.ml
+Alpaca/parser.ml
+Alpaca/parser.mli
+Alpaca/lang
 compiled
-*.rkt~
 *.bak
