@@ -1,6 +1,5 @@
 #Alpaca
-A statically-typed functional language developed by Noah Thederahn and Dalton McCleery.
-Created for Hanover College's Programming Languages course.
+A statically-typed functional language developed by Noah Thederahn and Dalton McCleery, created for Hanover College's Programming Languages course.
 
 ##To compile:
 
@@ -16,6 +15,6 @@ You can use it interactively as above. Or you can write a "program" in any file,
 `./lang < sample_input.txt`
 
 ##Important Files
-- details.md: add description and link
-- semantics.md: add description and link
-- sample_input.md: add description and link
+- [details.md] (https://github.com/TrikkStar/Alpaca/blob/master/details.md): add description
+- [semantics.md] (https://github.com/TrikkStar/Alpaca/blob/master/semantics.md): add description
+- [sample_input.md] (https://github.com/TrikkStar/Alpaca/blob/master/sample_input.md): add description and link
