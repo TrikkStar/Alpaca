@@ -4,6 +4,7 @@
 
 %token <float> FLOAT
 %token TRUE FALSE
+%token <list> LIST
 %token DBLSEMI
 %token IF THEN ELSE
 %token OR
@@ -43,6 +44,7 @@ expr:
   | FLOAT                        { NumS $1 }
   | FALSE                        { BoolS false }
   | TRUE                         { BoolS true }
+  | LIST                         { ListS $1 }
   | IF expr THEN expr ELSE expr  { IfS ($2, $4, $6) }
   | expr OR expr                 { OrS ($1, $3) }
   | expr AND expr                { AndS ($1, $3) }

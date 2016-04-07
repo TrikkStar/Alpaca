@@ -11,6 +11,7 @@ type exprS = NumS of float
             | CompS of string * exprS * exprS
             | EqS of exprS * exprS
             | NeqS of exprS * exprS
+            | ListS of listS
 
 type exprC = NumC of float
             | BoolC of bool
@@ -18,6 +19,7 @@ type exprC = NumC of float
             | ArithC of string * exprC * exprC
             | CompC of string * exprC * exprC
             | EqC of exprC * exprC
+            | ListC of listC
 
 type exprT = NumT of float
             | BoolT of bool
@@ -25,9 +27,11 @@ type exprT = NumT of float
             | ArithT of string * exprT * exprT
             | CompT of string * exprT * exprT
             | EqT of exprT * exprT
+            | ListT of listT
 
 type value = Num of float
             | Bool of bool
+            | List of list
 
 (* Environment lookup *)
 type 'a env

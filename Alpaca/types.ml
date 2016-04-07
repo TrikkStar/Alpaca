@@ -12,6 +12,7 @@ type exprS = NumS of float
             | CompS of string * exprS * exprS
             | EqS of exprS * exprS
             | NeqS of exprS * exprS
+            | ListS of listS
 
 (* You will need to add more cases here. *)
 type exprC = NumC of float
@@ -20,6 +21,7 @@ type exprC = NumC of float
             | ArithC of string * exprC * exprC
             | CompC of string * exprC * exprC
             | EqC of exprC * exprC
+            | ListC of listC
 
 type exprT = NumT of float
             | BoolT of bool
@@ -27,20 +29,57 @@ type exprT = NumT of float
             | ArithT of string * exprT * exprT
             | CompT of string * exprT * exprT
             | EqT of exprT * exprT
+            | ListT of listT
 
 (* You will need to add more cases here. *)
 type value = Num of float
             | Bool of bool
+            | List of list
 
 type 'a env = (string * 'a) list
 let empty = []
+
 
 (* lookup : string -> 'a env -> 'a option *)
 let rec lookup str env = match env with
   | []          -> None
   | (s,v) :: tl -> if s = str then Some v else lookup str tl
+
+
 (* val bind :  string -> 'a -> 'a env -> 'a env *)
 let bind str v env = (str, v) :: env
+
+
+(*   -- LIST Constructs --   *)
+
+(* add element to the front of a list *)
+let addToFront element lst =
+  match lst with
+  | [] -> element :: []
+  | head :: rest -> element :: head :: rest
+
+(* test of a list is empty *)
+let isEmpty lst = 
+  match lst with
+  | [] -> true
+  | _ -> false
+
+
+(* access the head of a list *)
+let getFirst lst =
+  match lst with
+  | [] -> raise (Failure ("List is empty"))
+  | head :: rest -> head
+
+
+(* access the tail of a list *)
+let rec getLast lst =
+  match lst with 
+  | [] -> raise (Failure ("List is empty"))
+  | tail :: [] -> tail
+  | head :: rest -> getLast rest
+
+(*    --              --      *)
 
 
 (*

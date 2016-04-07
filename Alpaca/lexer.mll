@@ -15,6 +15,7 @@ let dblsemi = ";;"
 let float = (digit+ '.'? | digit* frac) exp?
 let true = "true" | "#t"
 let false = "false" | "#f"
+let list = "list" | "lst" 
 let comp = ">" | ">=" | "<" | "<="
 
 rule token = parse
@@ -24,6 +25,7 @@ rule token = parse
   | float as x  { FLOAT (float_of_string x) }
   | true        { TRUE }
   | false       { FALSE }
+  | list        { LIST }
   | "if"        { IF }
   | "then"      { THEN }
   | "else"      { ELSE }
