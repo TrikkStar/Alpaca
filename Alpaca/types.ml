@@ -124,6 +124,9 @@ let rec typecheck env exp = match exp with
   | NumC i -> NumT i
   | BoolC b -> BoolT b
   | IfC (a, b, c) -> 
+    (match (typecheck env a) with
+        | BoolT ->
+        | _ -> raise (Failure "type Error"))
   | ArithC (a, x, y) ->
   | CompC (a, x, y) ->
   | EqC (x, y) ->
