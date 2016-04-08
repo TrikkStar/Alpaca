@@ -11,7 +11,8 @@ type exprS = NumS of float
             | CompS of string * exprS * exprS
             | EqS of exprS * exprS
             | NeqS of exprS * exprS
-            | ListS of listS
+            | ListS of list
+            | TupleS of exprS list
 
 type exprC = NumC of float
             | BoolC of bool
@@ -19,7 +20,8 @@ type exprC = NumC of float
             | ArithC of string * exprC * exprC
             | CompC of string * exprC * exprC
             | EqC of exprC * exprC
-            | ListC of listC
+            | ListC of list
+            | TupleC of exprC list
 
 type exprT = NumT of float
             | BoolT of bool
@@ -27,7 +29,8 @@ type exprT = NumT of float
             | ArithT of string * exprT * exprT
             | CompT of string * exprT * exprT
             | EqT of exprT * exprT
-            | ListT of listT
+            | ListT of list
+            | TupleT of exprT list
 
 type value = Num of float
             | Bool of bool
@@ -38,6 +41,11 @@ type 'a env
 val empty : 'a env
 val lookup : string -> 'a env -> 'a option
 val bind :  string -> 'a -> 'a env -> 'a env
+
+val addToFront : 'a -> 'a list -> 'a list
+val isEmpty : 'a list -> bool
+val getFirst : 'a list -> 'a
+val getLast : 'a list -> 'a
 
 (* typechecking*)
 val typecheck : exprC -> exprT
