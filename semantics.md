@@ -1,4 +1,4 @@
-#Description of specific syntax and semantics of *Alpaca* 
+#Description of specific syntax and semantics of *Alpaca*
 
 - Tupels: `(5, 7)`
 
@@ -20,7 +20,7 @@
 
 - Arithmatic operators: `ex1 + ex2 - ex3 * ex4 / ex5`
 
-- Comparison operators: `ex1 < ex2` ex1 <= ex2` `ex1 > ex2` `ex1 >= ex2`
+- Comparison operators: `ex1 < ex2` `ex1 <= ex2` `ex1 > ex2` `ex1 >= ex2`
 
 - Equality: `e1 == e2` `e1 != e2`
 
