@@ -25,12 +25,7 @@ type exprC = NumC of float
 
 type exprT = NumT of float
             | BoolT of bool
-            | IfT of exprT * exprT * exprT
-            | ArithT of string * exprT * exprT
-            | CompT of string * exprT * exprT
-            | EqT of exprT * exprT
             | ListT of list
-            | TupleT of exprT list
 
 type value = Num of float
             | Bool of bool

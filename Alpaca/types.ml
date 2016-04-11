@@ -27,12 +27,7 @@ type exprC = NumC of float
 
 type exprT = NumT of float
             | BoolT of bool
-            | IfT of exprT * exprT * exprT
-            | ArithT of string * exprT * exprT
-            | CompT of string * exprT * exprT
-            | EqT of exprT * exprT
             | ListT of list
-            | TupleT of exprT list
 
 (* You will need to add more cases here. *)
 type value = Num of float
@@ -126,13 +121,24 @@ let eqEval x y =
 let rec typecheck env exp = match exp with
   | NumC i -> NumT i
   | BoolC b -> BoolT b
+  | ListC l -> ListT l
   | IfC (a, b, c) -> 
     (match (typecheck env a) with
-        | BoolT ->
+        | BoolT -> 
+          (match ((typecheck env b), (typecheck env c)) with
+            | (NumT x, NumT y) -> NumT x
+            | (BoolT x, BoolT y) -> BoolT x
+            | (ListT x, ListT y) -> ListT x
+            | _ -> (Failure "type Error"))
         | _ -> raise (Failure "type Error"))
   | ArithC (a, x, y) ->
   | CompC (a, x, y) ->
   | EqC (x, y) ->
+    (match ((typecheck env x), (typecheck env y)) with
+            | (NumT a, NumT b) -> NumT a
+            | (BoolT a, BoolT b) -> BoolT a
+            | (ListT a, ListT b) -> ListT a
+            | _ -> (Failure "type Error"))
 
 
 (* INTERPRETER *)
