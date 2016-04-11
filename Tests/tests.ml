@@ -41,23 +41,3 @@ let t5a = evaluate (desugar (EqS (NumS 7.0, NumS 2.0))) = Bool false
 let t5b = evaluate (desugar (EqS (BoolS false, BoolS false))) = Bool true
 let t5c = evaluate (desugar (NeqS (NumS 7.0, NumS 2.0))) = Bool true
 let t5d = evaluate (desugar (NeqS (BoolS true, BoolS true))) = Bool false
-
-
-(* -- Tuple Tests -- *)
-let t6a = evaluate (desugar ())
-let t6b = evaluate (desugar ())
-let t6c = evaluate (desugar ())
-let t6d = evaluate (desugar ())
-let t6e = evaluate (desugar ())
-let t6f = evaluate (desugar ())
-let t6g = evaluate (desugar ())
-let t6h = evaluate (desugar ())
-
-
-(* -- List Tests -- *)
-let t7a = evaluate (())
-let t7b = evaluate (())
-let t7c = evaluate (())
-let t7d = evaluate (())
-let t7e = evaluate (())
-let t7f = evaluate (())

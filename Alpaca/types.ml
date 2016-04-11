@@ -12,8 +12,9 @@ type exprS = NumS of float
             | CompS of string * exprS * exprS
             | EqS of exprS * exprS
             | NeqS of exprS * exprS
-            | ListS of list
             | TupleS of exprS list
+            | LetS of symbol * exprS * exprS
+          (*| FunS of arg * exprS * close*)
 
 (* You will need to add more cases here. *)
 type exprC = NumC of float
@@ -22,17 +23,21 @@ type exprC = NumC of float
             | ArithC of string * exprC * exprC
             | CompC of string * exprC * exprC
             | EqC of exprC * exprC
-            | ListC of list
             | TupleC of exprC list
+            | LetC of symbol * exprC * exprC
+          (*| FunC of arg * exprC * close *)
 
 type exprT = NumT of float
             | BoolT of bool
             | ListT of list
+            | TupleT of list
+          (*| FunT of arg * exprT * close *)
 
 (* You will need to add more cases here. *)
 type value = Num of float
             | Bool of bool
             | List of list
+            | Tuple of list 
 
 type 'a env = (string * 'a) list
 let empty = []
@@ -54,13 +59,14 @@ let bind str v env = (str, v) :: env
 let addToFront element lst =
   match lst with
   | [] -> element :: []
+  | head :: [] -> element :: head :: []
   | head :: rest -> element :: head :: rest
 
 (* test of a list is empty *)
 let isEmpty lst = 
-  match lst with
-  | [] -> true
-  | _ -> false
+  if lst = empty
+  then true
+  else false
 
 
 (* access the head of a list *)
@@ -158,6 +164,7 @@ let rec desugar exprS = match exprS with
   | EqS (a, b)    -> EqC (desugar a, desugar b)
   | NeqS (a, b)   -> desugar (NotS (EqS (a, b)))
   | TupleS lst    -> desugar (TupleC lst)
+  | LetS (sym, e1, e2) -> desugar (LetC (sym, e1, e2))
 
 (* You will need to add cases here. *)
 (* interp : Value env -> exprC -> value *)
@@ -178,6 +185,7 @@ let rec interp env r = match r with
   | TupleC lst      -> match lst with
                        | [] -> []
                        | head :: rest -> (interp env head) @ (interp env rest) 
+(*| LetC (sym, e1, e2) -> *)
 
 
 (* evaluate : exprC -> val *)
@@ -190,4 +198,11 @@ let evaluate exprC = exprC |> interp []
 let rec valToString r = match r with
   | Num i           -> string_of_float i
   | Bool b          -> string_of_bool b
-(*| List lst        -> *)
+  | List lst        -> "[" ^ 
+                       (match lst with
+                       | [] -> "]"
+                       | head :: rest -> valToString head ^ ", " ^ valToString rest)
+  | Tuple lst       -> "(" ^
+                       (match lst with
+                       | [] -> ")" 
+                       | head :: rest -> valToString head ^ ", " ^ valToString rest)
