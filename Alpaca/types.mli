@@ -1,5 +1,6 @@
 exception Desugar of string      (* Use for desugarer errors *)
 exception Interp of string       (* Use for interpreter errors *)
+exception Type of string
 
 type exprS = NumS of float
             | BoolS of bool
@@ -21,9 +22,11 @@ type exprC = NumC of float
             | EqC of exprC * exprC
             | TupleC of exprC list
 
-type exprT = NumT of float
-            | BoolT of bool
-            | ListT of list
+type exprT = NumT
+            | BoolT
+            | ListT of exprT
+            | TupleT of exprT * exprT
+          (*| FunT of arg * exprT * close *)
 
 type value = Num of float
             | Bool of bool

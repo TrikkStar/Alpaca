@@ -1,5 +1,6 @@
 exception Desugar of string      (* Use for desugarer errors *)
 exception Interp of string       (* Use for interpreter errors *)
+exception Type of string
 
 (* You will need to add more cases here. *)
 type exprS = NumS of float
@@ -27,10 +28,10 @@ type exprC = NumC of float
             | LetC of symbol * exprC * exprC
           (*| FunC of arg * exprC * close *)
 
-type exprT = NumT of float
-            | BoolT of bool
-            | ListT of list
-            | TupleT of list
+type exprT = NumT
+            | BoolT
+            | ListT of exprT
+            | TupleT of exprT * exprT
           (*| FunT of arg * exprT * close *)
 
 (* You will need to add more cases here. *)
@@ -125,27 +126,33 @@ let eqEval x y =
 
 (* Type-Checker *)
 let rec typecheck env exp = match exp with
-  | NumC i -> NumT i
-  | BoolC b -> BoolT b
-  | ListC l -> ListT l
+  | NumC -> NumT
+  | BoolC -> BoolT
+  | ListC l -> typeEquals (typecheck env l)
   | IfC (a, b, c) -> 
     (match (typecheck env a) with
-        | BoolT -> 
-          (match ((typecheck env b), (typecheck env c)) with
-            | (NumT x, NumT y) -> NumT x
-            | (BoolT x, BoolT y) -> BoolT x
-            | (ListT x, ListT y) -> ListT x
-            | _ -> (Failure "type Error"))
-        | _ -> raise (Failure "type Error"))
-  | ArithC (a, x, y) ->
+        | BoolT -> typeEquals (typecheck env b) (typecheck env c)
+        | _ -> raise (Type "If-member requires boolean"))
+  | ArithC (a, x, y) -> 
+    (match a with
+      | string -> 
+        (match (typeEquals (typecheck env x) (typecheck env y)) with
+          | NumT -> NumT
+          | _ -> raise (Type "Arithmatic operations only allow NumT"))
+      | _ -> raise (Type "Operator not given for arithmatic operation"))
   | CompC (a, x, y) ->
-  | EqC (x, y) ->
-    (match ((typecheck env x), (typecheck env y)) with
-            | (NumT a, NumT b) -> NumT a
-            | (BoolT a, BoolT b) -> BoolT a
-            | (ListT a, ListT b) -> ListT a
-            | _ -> (Failure "type Error"))
+    (match a with
+      | string -> typeEquals (typecheck env x) (typecheck env y)
+      | _ -> raise (Type "Operator not given for comparison operation"))
+  | EqC (x, y) -> typeEquals (typecheck env x) (typecheck env y)
+  | TupleC t -> typeEquals (typecheck env t)
+         
 
+let typeEquals a b =
+  match (a, b) with
+  | (NumT a, NumT b) -> NumT
+  | (BoolT a, BoolT b) -> BoolT
+  | _ -> (Type "types do not match"))
 
 (* INTERPRETER *)
 

@@ -26,4 +26,7 @@ let _ =
         | Interp s                  -> output_string stdout ("Interpret error: " ^ s);
                                        print_newline();
                                        Lexing.flush_input lexbuf
+        | Type s                    -> output_string stdout ("Type error: " ^ s);
+                                       print_newline();
+                                       Lexing.flush_input lexbuf
     done
