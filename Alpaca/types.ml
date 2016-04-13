@@ -14,8 +14,9 @@ type exprS = NumS of float
             | EqS of exprS * exprS
             | NeqS of exprS * exprS
             | TupleS of exprS list
-            | LetS of symbol * exprS * exprS
-          (*| FunS of arg * exprS * close*)
+            | LetS of string * exprS * exprS
+            | FunS of exprS * exprS
+            (*| VarS of *)
 
 (* You will need to add more cases here. *)
 type exprC = NumC of float
@@ -25,14 +26,16 @@ type exprC = NumC of float
             | CompC of string * exprC * exprC
             | EqC of exprC * exprC
             | TupleC of exprC list
-            | LetC of symbol * exprC * exprC
-          (*| FunC of arg * exprC * close *)
+            | LetC of string * exprC * exprC
+            | FunC of exprC * exprC
+            (*| VarC of *)
 
 type exprT = NumT
             | BoolT
-            | ListT of exprT
-            | TupleT of exprT * exprT
-          (*| FunT of arg * exprT * close *)
+            | ListT of exprT list
+            | TupleT of exprT list
+            | FunT of exprT * exprT
+            (*| VarT of *)
 
 (* You will need to add more cases here. *)
 type value = Num of float
@@ -172,6 +175,7 @@ let rec desugar exprS = match exprS with
   | NeqS (a, b)   -> desugar (NotS (EqS (a, b)))
   | TupleS lst    -> desugar (TupleC lst)
   | LetS (sym, e1, e2) -> desugar (LetC (sym, e1, e2))
+  | FunS (e1, e2) -> desugar (FunC (e1, e2))
 
 (* You will need to add cases here. *)
 (* interp : Value env -> exprC -> value *)
@@ -193,6 +197,7 @@ let rec interp env r = match r with
                        | [] -> []
                        | head :: rest -> (interp env head) @ (interp env rest) 
 (*| LetC (sym, e1, e2) -> *)
+(*| FunC (e1, e2)      -> *)
 
 
 (* evaluate : exprC -> val *)

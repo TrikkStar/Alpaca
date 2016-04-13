@@ -13,6 +13,9 @@ type exprS = NumS of float
             | EqS of exprS * exprS
             | NeqS of exprS * exprS
             | TupleS of exprS list
+            | LetS of string * exprS * exprS
+            | FunS of exprS * exprS
+            (*| VarS of *)
 
 type exprC = NumC of float
             | BoolC of bool
@@ -21,12 +24,17 @@ type exprC = NumC of float
             | CompC of string * exprC * exprC
             | EqC of exprC * exprC
             | TupleC of exprC list
+            | LetC of string * exprC * exprC
+            | FunC of exprC * exprC
+            (*| VarC of *)
 
 type exprT = NumT
             | BoolT
-            | ListT of exprT
-            | TupleT of exprT * exprT
-          (*| FunT of arg * exprT * close *)
+            | ListT of exprT list
+            | TupleT of exprT list
+            | LetT of string * exprT * exprT
+            | FunT of exprT * exprT
+            (*| VarT of *)
 
 type value = Num of float
             | Bool of bool
