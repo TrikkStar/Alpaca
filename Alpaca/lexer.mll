@@ -17,6 +17,7 @@ let true = "true" | "#t"
 let false = "false" | "#f"
 let list = "list" | "lst" 
 let tuple = "pair" | "tuple" | "triple" 
+let let = "let" 
 let comp = ">" | ">=" | "<" | "<="
 
 rule token = parse
@@ -28,6 +29,7 @@ rule token = parse
   | false       { FALSE }
   | list        { LIST }
   | tuple       { TUPLE }
+  | let         { LET }
   | "if"        { IF }
   | "then"      { THEN }
   | "else"      { ELSE }

@@ -24,7 +24,7 @@ type exprC = NumC of float
             | CompC of string * exprC * exprC
             | EqC of exprC * exprC
             | TupleC of exprC list
-            | LetC of string * exprC * exprC
+            | LetC of string * exprC
             | FunC of exprC list * exprC
             (*| VarC of *)
 
@@ -32,7 +32,7 @@ type exprT = NumT
             | BoolT
             | ListT of exprT list
             | TupleT of exprT list
-            | LetT of string * exprT * exprT
+            | LetT of string * exprT
             | FunT of exprT * exprT
             (*| VarT of *)
 

@@ -14,7 +14,7 @@ type exprS = NumS of float
             | EqS of exprS * exprS
             | NeqS of exprS * exprS
             | TupleS of exprS list
-            | LetS of string * exprS * exprS
+            | LetS of string * exprS
             | FunS of exprS list * exprS
             (*| VarS of *)
 
@@ -26,14 +26,14 @@ type exprC = NumC of float
             | CompC of string * exprC * exprC
             | EqC of exprC * exprC
             | TupleC of exprC list
-            | LetC of string * exprC * exprC
+            | LetC of string * exprC
             | FunC of exprC list * exprC
             (*| VarC of *)
 
 type exprT = NumT
             | BoolT
-            | ListT of exprT list
-            | TupleT of exprT list
+            | ListT of exprT
+            | TupleT of exprT
             | FunT of exprT * exprT
             (*| VarT of *)
 
@@ -196,7 +196,7 @@ let rec interp env r = match r with
   | TupleC lst      -> match lst with
                        | [] -> []
                        | head :: rest -> (interp env head) @ (interp env rest) 
-(*| LetC (sym, e1, e2) -> *)
+  | LetC (symb, e1) -> bind symb (interp env e1)
 (*| FunC (e1, e2)      -> *)
 
 
