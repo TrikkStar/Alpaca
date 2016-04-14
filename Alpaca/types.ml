@@ -149,7 +149,14 @@ let rec typecheck env exp = match exp with
       | string -> typeEquals (typecheck env x) (typecheck env y)
       | _ -> raise (Type "Operator not given for comparison operation"))
   | EqC (x, y) -> typeEquals (typecheck env x) (typecheck env y)
-  | TupleC t -> typeEquals (typecheck env t)
+  | TupleC t ->
+    (match t with
+    | head :: tail -> typecheck env head :: typecheck env tail
+    | [] -> [])
+  | ListC l ->
+    (match l with
+    | head :: tail -> typecheck env head :: typecheck env tail
+    | [] -> [])
 
 
 let typeEquals a b =
@@ -228,9 +235,9 @@ let rec typToString r = match r with
   | BoolT -> "Bool"
   | ListT l ->
     (match l with
-      | head :: rest -> typToString head ^ " * " ^ valToString rest)
+      | head :: rest -> typToString head ^ " * " ^ typToString rest)
   | TupleT t ->
     (match t with
-      | head :: rest -> typToString head ^ " * " ^ valToString rest)
+      | head :: rest -> typToString head ^ " * " ^ typToString rest)
   (*| LetT of string * exprT
   | FunT of exprT * exprT*)
