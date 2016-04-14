@@ -47,9 +47,9 @@ expr:
   | FLOAT                        { NumS $1 }
   | FALSE                        { BoolS false }
   | TRUE                         { BoolS true }
-  | LIST                         { ListS $1 }
-  | TUPLE                        { TupleS $1 }
-  | LET                          { LetS $1 }
+  | LIST expr                    { ListS $2 }
+  | TUPLE expr                   { TupleS $2 }
+  | LET expr                     { LetS $2 }
   | VARIABLE expr                { VarS $2}
   | IF expr THEN expr ELSE expr  { IfS ($2, $4, $6) }
   | expr OR expr                 { OrS ($1, $3) }

@@ -15,9 +15,9 @@ let dblsemi = ";;"
 let float = (digit+ '.'? | digit* frac) exp?
 let true = "true" | "#t"
 let false = "false" | "#f"
-let list = "list" | "lst" 
-let tuple = "pair" | "tuple" | "triple" 
-let let = "let" 
+let list = "list" | "lst"
+let tuple = "pair" | "tuple" | "triple"
+let lett = "let"
 let comp = ">" | ">=" | "<" | "<="
 
 rule token = parse
@@ -29,7 +29,7 @@ rule token = parse
   | false       { FALSE }
   | list        { LIST }
   | tuple       { TUPLE }
-  | let         { LET }
+  | lett        { LET }
   | "if"        { IF }
   | "then"      { THEN }
   | "else"      { ELSE }
