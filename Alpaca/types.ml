@@ -32,8 +32,9 @@ type exprC = NumC of float
 
 type exprT = NumT
             | BoolT
-            | ListT of exprT
-            | TupleT of exprT
+            | ListT of exprT list
+            | TupleT of exprT list
+            | LetT of string * exprT
             | FunT of exprT * exprT
             (*| VarT of *)
 
@@ -41,7 +42,7 @@ type exprT = NumT
 type value = Num of float
             | Bool of bool
             | List of list
-            | Tuple of list 
+            | Tuple of list
 
 type 'a env = (string * 'a) list
 let empty = []
@@ -67,7 +68,7 @@ let addToFront element lst =
   | head :: rest -> element :: head :: rest
 
 (* test of a list is empty *)
-let isEmpty lst = 
+let isEmpty lst =
   if lst = empty
   then true
   else false
@@ -82,7 +83,7 @@ let getFirst lst =
 
 (* access the tail of a list *)
 let rec getLast lst =
-  match lst with 
+  match lst with
   | [] -> raise (Failure ("List is empty"))
   | tail :: [] -> tail
   | head :: rest -> getLast rest
@@ -132,16 +133,16 @@ let rec typecheck env exp = match exp with
   | NumC -> NumT
   | BoolC -> BoolT
   | ListC l -> typeEquals (typecheck env l)
-  | IfC (a, b, c) -> 
+  | IfC (a, b, c) ->
     (match (typecheck env a) with
         | BoolT -> typeEquals (typecheck env b) (typecheck env c)
-        | _ -> raise (Type "If-member requires boolean"))
-  | ArithC (a, x, y) -> 
+        | _ -> raise (Type "If-member requires Bool"))
+  | ArithC (a, x, y) ->
     (match a with
-      | string -> 
+      | string ->
         (match (typeEquals (typecheck env x) (typecheck env y)) with
           | NumT -> NumT
-          | _ -> raise (Type "Arithmatic operations only allow NumT"))
+          | _ -> raise (Type "Arithmatic operations only allow Num"))
       | _ -> raise (Type "Operator not given for arithmatic operation"))
   | CompC (a, x, y) ->
     (match a with
@@ -149,13 +150,13 @@ let rec typecheck env exp = match exp with
       | _ -> raise (Type "Operator not given for comparison operation"))
   | EqC (x, y) -> typeEquals (typecheck env x) (typecheck env y)
   | TupleC t -> typeEquals (typecheck env t)
-         
+
 
 let typeEquals a b =
   match (a, b) with
   | (NumT a, NumT b) -> NumT
   | (BoolT a, BoolT b) -> BoolT
-  | _ -> (Type "types do not match"))
+  | _ -> (Type "Types do not match"))
 
 (* INTERPRETER *)
 
@@ -195,26 +196,41 @@ let rec interp env r = match r with
   | EqC (x, y) ->  eqEval (interp env x) (interp env y)
   | TupleC lst      -> match lst with
                        | [] -> []
-                       | head :: rest -> (interp env head) @ (interp env rest) 
+                       | head :: rest -> (interp env head) @ (interp env rest)
   | LetC (symb, e1) -> bind symb (interp env e1)
 (*| FunC (e1, e2)      -> *)
 
 
 (* evaluate : exprC -> val *)
-let evaluate exprC = exprC |> interp []
+let evaluate exprC =
+  let typ = typecheck [] exprC
+    in let val = interp [] exprC
+      in (typ; val)
 
 
-
+let outputToString typ val = (typToString typ) ^ (valToString val)
 
 (* You will need to add cases to this function as you add new value types. *)
 let rec valToString r = match r with
   | Num i           -> string_of_float i
   | Bool b          -> string_of_bool b
-  | List lst        -> "[" ^ 
+  | List lst        -> "[" ^
                        (match lst with
                        | [] -> "]"
                        | head :: rest -> valToString head ^ ", " ^ valToString rest)
   | Tuple lst       -> "(" ^
                        (match lst with
-                       | [] -> ")" 
+                       | [] -> ")"
                        | head :: rest -> valToString head ^ ", " ^ valToString rest)
+
+let rec typToString r = match r with
+  | NumT -> "Num"
+  | BoolT -> "Bool"
+  | ListT l ->
+    (match l with
+      | head :: rest -> typToString head ^ " * " ^ valToString rest)
+  | TupleT t ->
+    (match t with
+      | head :: rest -> typToString head ^ " * " ^ valToString rest)
+  (*| LetT of string * exprT
+  | FunT of exprT * exprT*)

@@ -53,12 +53,14 @@ val getFirst : 'a list -> 'a
 val getLast : 'a list -> 'a
 
 (* typechecking*)
-val typecheck : exprC -> exprT
+val typecheck : exprC env -> exprT
 
 (* Interpreter steps *)
 val desugar : exprS -> exprC
 val interp : value env -> exprC -> value
-val evaluate : exprC -> value
+val evaluate : exprC -> exprT * value
 
 (* result post-processing *)
 val valToString : value -> string
+val typToString : exprT -> string
+val outputToString : exprT * value -> string

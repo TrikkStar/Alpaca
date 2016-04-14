@@ -8,7 +8,7 @@ let _ =
       try
         let result = Parser.main Lexer.token lexbuf in
           result |> desugar |> evaluate
-                 |> valToString |> output_string stdout;
+                 |> outputToString |> output_string stdout;
           print_newline();
       with
         | Parsing.Parse_error       -> output_string stdout "Parse error in statement";
