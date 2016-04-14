@@ -38,8 +38,8 @@ type exprT = NumT
 
 type value = Num of float
             | Bool of bool
-            | List of list
-            | Tuple of list
+            | List of value list
+            | Tuple of value list
 
 (* Environment lookup *)
 type 'a env

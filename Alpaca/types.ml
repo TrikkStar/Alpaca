@@ -41,8 +41,8 @@ type exprT = NumT
 (* You will need to add more cases here. *)
 type value = Num of float
             | Bool of bool
-            | List of list
-            | Tuple of list
+            | List of value list
+            | Tuple of value list
 
 type 'a env = (string * 'a) list
 let empty = []
@@ -136,7 +136,8 @@ let rec typecheck env exp = match exp with
   | IfC (a, b, c) ->
     (match (typecheck env a) with
         | BoolT -> typeEquals (typecheck env b) (typecheck env c)
-        | _ -> raise (Type "If-member requires Bool"))
+        | _ -> raise (Type "If-member requires Bool"))| LetT of string * exprT
+            | FunT of exprT * exprT
   | ArithC (a, x, y) ->
     (match a with
       | string ->
