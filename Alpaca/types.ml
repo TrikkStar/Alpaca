@@ -16,8 +16,9 @@ type exprS = NumS of float
             | ListS of exprS list
             | TupleS of exprS list
             | LetS of string * exprS
-            | FunS of exprS list * exprS
-            (*| VarS of *)
+            | FunS of string list * exprS
+            | VarS of string
+            | CommentS
 
 (* You will need to add more cases here. *)
 type exprC = NumC of float
@@ -28,17 +29,24 @@ type exprC = NumC of float
             | EqC of exprC * exprC
             | ListC of exprC list
             | TupleC of exprC list
+            | ListC of exprC list
             | LetC of string * exprC
-            | FunC of exprC list * exprC
-            (*| VarC of *)
+            | FunC of string list * exprC
+            | VarC of string
+            | CommentC
 
 type exprT = NumT
             | BoolT
+<<<<<<< Updated upstream
             | ListT of exprT list
             | TupleT of exprT list
             | LetT of string * exprT
+=======
+            | ListT of exprT
+            | TupleT of exprT list
+>>>>>>> Stashed changes
             | FunT of exprT * exprT
-            (*| VarT of *)
+            | VarT of string
 
 (* You will need to add more cases here. *)
 type value = Num of float
@@ -91,6 +99,12 @@ let rec getLast lst =
   | head :: rest -> getLast rest
 
 (*    --              --      *)
+
+let rec map (f, lst) =
+  match lst with
+  | [] -> []
+  | head :: rest -> f (head) :: map rest
+
 
 
 (*
@@ -175,7 +189,6 @@ let typeEquals a b =
 let rec desugar exprS = match exprS with
   | NumS i        -> NumC i
   | BoolS b       -> BoolC b
-  | ListS lst     -> ListC lst
   | IfS (a, b, c) -> IfC (desugar a, desugar b, desugar c)
   | NotS e        -> IfC (desugar e, BoolC false, BoolC true)
   | OrS (e1, e2)  -> IfC (desugar e1, BoolC true, IfC (desugar e2, BoolC true, BoolC false))
@@ -184,16 +197,23 @@ let rec desugar exprS = match exprS with
   | CompS (s, a, b) -> CompC (s, desugar a, desugar b)
   | EqS (a, b)    -> EqC (desugar a, desugar b)
   | NeqS (a, b)   -> desugar (NotS (EqS (a, b)))
-  | TupleS lst    -> desugar (TupleC lst)
-  | LetS (sym, e1, e2) -> desugar (LetC (sym, e1, e2))
+  | ListS lst     -> map (desugar lst)
+  | ListS lst       -> (match lst with
+                       | [] -> []
+                       | head :: rest -> (desugar head) @ (desugar rest)
+                       )
+  | TupleS lst      -> (match lst with
+                       | [] -> []
+                       | head :: rest -> (desugar head) @ (desugar rest)
+                       ) 
   | FunS (e1, e2) -> desugar (FunC (e1, e2))
+  | VarS sym      -> desugar (VarC sym)
 
 (* You will need to add cases here. *)
 (* interp : Value env -> exprC -> value *)
 let rec interp env r = match r with
   | NumC i        -> Num i
   | BoolC b       -> Bool b
-  | ListC lst     -> List lst
   | IfC (a, b, c) ->
     (match (interp env a) with
         | Bool x ->
@@ -204,10 +224,19 @@ let rec interp env r = match r with
   | ArithC (a, x, y) -> arithEval a (interp  env x) (interp env y)
   | CompC (a, x, y) -> compEval a (interp  env x) (interp env y)
   | EqC (x, y) ->  eqEval (interp env x) (interp env y)
-  | TupleC lst      -> match lst with
+  | ListC lst       -> (match lst with
                        | [] -> []
                        | head :: rest -> (interp env head) @ (interp env rest)
+<<<<<<< Updated upstream
+=======
+                       )
+  | TupleC lst      -> (match lst with
+                       | [] -> []
+                       | head :: rest -> (interp env head) @ (interp env rest)
+                       ) 
+>>>>>>> Stashed changes
   | LetC (symb, e1) -> bind symb (interp env e1)
+  | VarC sym        -> (**)
 (*| FunC (e1, e2)      -> *)
 
 
@@ -233,6 +262,7 @@ let rec valToString r = match r with
                        | [] -> ")"
                        | head :: rest -> valToString head ^ ", " ^ valToString rest)
 
+<<<<<<< Updated upstream
 let rec typToString r = match r with
   | NumT -> "Num"
   | BoolT -> "Bool"
@@ -244,3 +274,10 @@ let rec typToString r = match r with
       | head :: rest -> typToString head ^ " * " ^ typToString rest)
   (*| LetT of string * exprT
   | FunT of exprT * exprT*)
+=======
+
+
+
+let rec bothToString (type_str, val_str) =
+  "(" ^ val_str ^ ", " ^ type_str ^ ")"
+>>>>>>> Stashed changes

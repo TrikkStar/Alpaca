@@ -11,6 +11,8 @@
 	arg1 + arg2;;
 '
 
+'(* this line should be ignored *)'
+
 'let addMultipleTogether (arg1 : int, arg2 : int, arg3 : int, arg4 : int) =
 	addTogether ( addTogether (arg1, arg2) addTogether (arg3, arg4) );;
 '

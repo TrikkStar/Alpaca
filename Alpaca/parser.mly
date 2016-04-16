@@ -7,7 +7,12 @@
 %token <list> LIST
 %token LET
 %token VARIABLE
+<<<<<<< Updated upstream
 %token <list> TUPLE
+=======
+%token COMMENT
+%token TUPLE
+>>>>>>> Stashed changes
 %token DBLSEMI
 %token IF THEN ELSE
 %token OR
@@ -51,6 +56,7 @@ expr:
   | TUPLE                        { TupleS $1 }
   | LET expr                     { LetS $2 }
   | VARIABLE expr                { VarS $2}
+  | COMMENT                      { CommentS $1 }
   | IF expr THEN expr ELSE expr  { IfS ($2, $4, $6) }
   | expr OR expr                 { OrS ($1, $3) }
   | expr AND expr                { AndS ($1, $3) }

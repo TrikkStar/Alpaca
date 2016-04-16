@@ -12,6 +12,7 @@ let exp = ['e' 'E'] sign? digit+
 let white = [' ' '\t' '\n' '\r']+ | "//" ([^ '\n' '\r'])*
 let newline = '\n' | '\r' | "\r\n"
 let dblsemi = ";;"
+let comment = "(*"+ ['a' - 'z']+ "*)"
 let float = (digit+ '.'? | digit* frac) exp?
 let true = "true" | "#t"
 let false = "false" | "#f"
@@ -29,7 +30,12 @@ rule token = parse
   | false       { FALSE }
   | list        { LIST }
   | tuple       { TUPLE }
+<<<<<<< Updated upstream
   | lett        { LET }
+=======
+  | let         { LET }
+  | comment     { COMMENT }
+>>>>>>> Stashed changes
   | "if"        { IF }
   | "then"      { THEN }
   | "else"      { ELSE }
