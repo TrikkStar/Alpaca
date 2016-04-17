@@ -6,7 +6,6 @@
 %token TRUE FALSE
 %token <expr list> LIST
 %token <expr list> TUPLE
-%token COMMENT
 %token DBLSEMI
 %token IF THEN ELSE
 %token OR
@@ -28,6 +27,8 @@
 %nonassoc EQ NEQ
 %nonassoc NOT
 %nonassoc COMPOP
+%nonassoc VARIABLE
+%nonassoc LET
 
 %left PLUS MINUS
 %left TIMES DIVIDE
@@ -52,7 +53,6 @@ expr:
   | TUPLE                        { TupleS $1 }
   | LET expr                     { LetS $2 }
   | VARIABLE expr                { VarS $2}
-  | COMMENT                      { CommentS }
   | IF expr THEN expr ELSE expr  { IfS ($2, $4, $6) }
   | expr OR expr                 { OrS ($1, $3) }
   | expr AND expr                { AndS ($1, $3) }
