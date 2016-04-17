@@ -163,14 +163,14 @@ let rec typecheck env exp = match exp with
       | string -> typeEquals (typecheck env x) (typecheck env y)
       | _ -> raise (Type "Operator not given for comparison operation"))
   | EqC (x, y) -> typeEquals (typecheck env x) (typecheck env y)
-  | TupleC t ->
+  (*| TupleC t ->
     (match t with
     | head :: tail -> (typecheck env head) :: (typecheck env tail)
     | [] -> [])
   | ListC l ->
     (match l with
     | head :: tail -> (typecheck env head) :: (typecheck env tail)
-    | [] -> [])
+    | [] -> [])*)
 
 
 (* INTERPRETER *)
@@ -188,11 +188,11 @@ let rec desugar exprS = match exprS with
   | CompS (s, a, b) -> CompC (s, desugar a, desugar b)
   | EqS (a, b)    -> EqC (desugar a, desugar b)
   | NeqS (a, b)   -> desugar (NotS (EqS (a, b)))
-  | ListS lst     -> map (desugar lst)
+  (*| ListS lst     -> map (desugar lst)
   | TupleS lst      -> map (desugar lst)
   | LetS (var, e1) -> desugar (LetC (var, (desugar e1)))
   | FunS (arg_lst, e1)   -> desugar (FunC (arg_lst, (desugar e1)))
-  | VarS (sym, e1)  -> desugar (LetC (var, (desugar e1)))
+  | VarS (sym, e1)  -> desugar (LetC (var, (desugar e1)))*)
 
 (* You will need to add cases here. *)
 (* interp : Value env -> exprC -> value *)
@@ -208,7 +208,7 @@ let rec interp env r = match r with
         | _ -> raise (Interp "Error: boolean statement needed"))
   | ArithC (a, x, y) -> arithEval a (interp  env x) (interp env y)
   | CompC (a, x, y) -> compEval a (interp  env x) (interp env y)
-  | EqC (x, y) ->  eqEval (interp env x) (interp env y)
+  (*| EqC (x, y) ->  eqEval (interp env x) (interp env y)
   | ListC lst       -> (match lst with
                        | [] -> []
                        | head :: rest -> (interp env head) @ (interp env rest)
@@ -217,7 +217,7 @@ let rec interp env r = match r with
                        | [] -> []
                        | head :: rest -> (interp env head) @ (interp env rest)
                        ) 
-  | LetC (var, e1)      -> bind var (interp env e1) env
+  | LetC (var, e1)      -> bind var (interp env e1) env*)
 
 
 (* evaluate : exprC -> val *)
@@ -227,13 +227,11 @@ let evaluate exprC =
       in (typ; valu)
 
 
-let outputToString typ valu = (typToString typ) ^ (valToString valu)
-
 (* You will need to add cases to this function as you add new value types. *)
 let rec valToString r = match r with
   | Num i           -> string_of_float i
   | Bool b          -> string_of_bool b
-  | List lst        -> "[" ^
+  (*| List lst        -> "[" ^
                        (match lst with
                        | last :: [] -> valToString last ^ "]"
                        | head :: rest -> valToString head ^ ", " ^ valToString rest)
@@ -242,23 +240,21 @@ let rec valToString r = match r with
                        (match lst with
                        | last :: [] -> valToString last ^ ")"
                        | head :: rest -> valToString head ^ ", " ^ valToString rest)
-                       | [] -> ")"
-
-
+                       | [] -> ")"*)
 
 let rec typToString r = match r with
   | NumT -> "Num"
   | BoolT -> "Bool"
-  | ListT l ->
+  (*| ListT l ->
     (match l with
       | head :: rest -> typToString head ^ " * " ^ typToString rest)
   | TupleT t ->
     (match t with
       | head :: rest -> typToString head ^ " * " ^ typToString rest)
-  (*| LetT of string * exprT
+  | LetT of string * exprT
   | FunT of exprT * exprT*)
 
-
+let outputToString typ valu = (typToString typ) ^ (valToString valu)
 
 let rec bothToString (type_str, val_str) =
   "(" ^ val_str ^ ", " ^ type_str ^ ")"

@@ -25,18 +25,17 @@ type exprC = NumC of float
             | ArithC of string * exprC * exprC
             | CompC of string * exprC * exprC
             | EqC of exprC * exprC
-            | ListC of exprC list
             | TupleC of exprC list
+            | ListC of exprC list
             | LetC of string * exprC
             | FunC of string list * exprC
             (*| VarC of string*)
 
-
 type exprT = NumT
             | BoolT
-            | ListT of exprT list
-            | TupleT of exprT list
             | LetT of string * exprT
+            | ListT of exprT
+            | TupleT of exprT list
             | FunT of exprT * exprT
             | VarT of string
 
@@ -57,7 +56,7 @@ val getFirst : 'a list -> 'a
 val getLast : 'a list -> 'a
 
 (* typechecking*)
-val typecheck : exprC env -> exprT
+val typecheck : env -> exprC -> exprT
 
 (* Interpreter steps *)
 val desugar : exprS -> exprC
