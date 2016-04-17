@@ -41,6 +41,8 @@ type exprT = NumT
             | FunT of exprT * exprT
             | VarT of string
 
+type 'a env
+
 type value = Num of float
             | Bool of bool
             | List of value list
@@ -48,7 +50,7 @@ type value = Num of float
             | Clos of exprC * (value env)
 
 (* Environment lookup *)
-type 'a env
+
 val empty : 'a env
 val lookup : string -> 'a env -> 'a option
 val bind :  string -> 'a -> 'a env -> 'a env
@@ -58,10 +60,8 @@ val isEmpty : 'a list -> bool
 val getFirst : 'a list -> 'a
 val getLast : 'a list -> 'a
 
-val bind_lsts :  'a list -> 'b list -> 'a env -> 'a env
-
 (* typechecking*)
-val typecheck : env -> exprC -> exprT
+val typecheck : exprT env -> exprC -> exprT
 
 (* Interpreter steps *)
 val desugar : exprS -> exprC
@@ -73,4 +73,4 @@ val valToString : value -> string
 val typToString : exprT -> string
 val outputToString : exprT * value -> string
 
-val bothToString : string -> string -> string
+val bothToString : string * string -> string

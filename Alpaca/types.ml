@@ -43,6 +43,8 @@ type exprT = NumT
             | FunT of exprT * exprT
             | VarT of string
 
+type 'a env = (string * 'a) list
+
 (* You will need to add more cases here. *)
 type value = Num of float
             | Bool of bool
@@ -50,7 +52,7 @@ type value = Num of float
             | Tuple of value list
             | Clos of exprC * (value env)
 
-type 'a env = (string * 'a) list
+
 let empty = []
 
 
@@ -96,24 +98,22 @@ let rec getLast lst =
 
 (*    --              --      *)
 
-(*let rec map (f, lst) =
+let rec map (f, lst) =
   match lst with
   | [] -> []
-  | head :: rest -> f (head) :: map rest*)
+  | head :: rest -> f (head) :: map (f, rest)
 
 
 
 (*   --  function_arg binding  --   *)
 
-let bind_lsts (lst_str, lst_vals) =
-  match lst_str with
-  | [] -> env
-  | head_str :: rest -> 
-
-          (match lst_vals with
-          | [] -> env
-          | head_vals :: rest_vals -> (bind head_str head_vals env) :: bind_lsts (rest, rest_vals) 
-          )
+let rec bind_lsts (lst_str, lst_vals, envr) =
+  match (lst_str, lst_vals) with
+  | ([], []) -> envr
+  | (_, []) | ([], _) -> raise (Failure "Not Correct Amount of Arguments")
+  | (head_str :: rest, head_vals :: rest_vals) -> 
+        bind head_str head_vals (bind_lsts (rest, rest_vals, envr))
+      
 
 
 (*
@@ -204,14 +204,12 @@ let rec desugar exprS = match exprS with
   | CompS (s, a, b) -> CompC (s, desugar a, desugar b)
   | EqS (a, b)    -> EqC (desugar a, desugar b)
   | NeqS (a, b)   -> desugar (NotS (EqS (a, b)))
-(*
-  | ListS lst             -> map (desugar lst)
-  | TupleS lst            -> map (desugar lst)
-  | LetS (var, e1)        -> desugar (LetC (var, (desugar e1)))
-  | FunS (name, args, e1) -> desugar (FunC (name, args, (desugar e1))
-  | VarS (sym, e1)        -> desugar (LetC (var, (desugar e1)))
-  | CallS (func, arg_lst) -> desugar (CallC (desugar func, arg_lst)) 
-*)
+  | ListS lst             -> ListC (map (desugar, lst))
+  | TupleS lst            -> TupleC (map (desugar, lst))
+  | LetS (var, e1)        -> LetC (var, (desugar e1))
+  | FunS (name, args, e1) -> FunC (name, args, (desugar e1))
+  | VarS (sym, e1)        -> LetC (sym, (desugar e1))
+  | CallS (func, arg_lst) -> CallC (desugar func, arg_lst)
 
 
 (* You will need to add cases here. *)
@@ -229,12 +227,11 @@ let rec interp env r = match r with
 
   | ArithC (a, x, y) -> arithEval a (interp  env x) (interp env y)
   | CompC (a, x, y) -> compEval a (interp  env x) (interp env y)
-(*
   | EqC (x, y)       ->  eqEval (interp env x) (interp env y)
-
+(*
   | ListC lst        -> (match lst with
-                         | [] -> []
-                         | head :: rest -> (interp env head) @ (interp env rest)
+                         | last :: [] -> (interp env last)
+                         | head :: rest -> (interp env head) @ (interp env (ListC rest))
                          )
 
   | TupleC lst       -> (match lst with
@@ -271,7 +268,7 @@ let rec interp env r = match r with
 let evaluate exprC =
   let typ = typecheck [] exprC
     in let valu = interp [] exprC
-      in (typ; valu)
+      in (typ, valu)
 
 
 (* You will need to add cases to this function as you add new value types. *)
@@ -305,7 +302,7 @@ let rec typToString r = match r with
   | FunT of exprT * exprT
 *)
 
-let outputToString typ valu = (typToString typ) ^ (valToString valu)
+let outputToString (typ, valu) = (typToString typ) ^ (valToString valu)
 
 let rec bothToString (type_str, val_str) =
   "(" ^ val_str ^ ", " ^ type_str ^ ")"
