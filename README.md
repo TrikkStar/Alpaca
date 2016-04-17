@@ -16,6 +16,6 @@ You can use it interactively as above. Or you can write a "program" in any file,
 `./lang < sample_input.txt`
 
 ##Important Files
-- [details.md] (https://github.com/TrikkStar/Alpaca/blob/master/details.md): add description
-- [semantics.md] (https://github.com/TrikkStar/Alpaca/blob/master/semantics.md): add description
-- [sample_input.md] (https://github.com/TrikkStar/Alpaca/blob/master/sample_input.md): add description and link
+- [details.md] (https://github.com/TrikkStar/Alpaca/blob/master/details.md): Log of significant problems encountered during development
+- [semantics.md] (https://github.com/TrikkStar/Alpaca/blob/master/semantics.md): File detailing specific semantics used in Alpaca
+- [sample_input.md] (https://github.com/TrikkStar/Alpaca/blob/master/sample_input.md): Sample list of programs that can be run in Alpaca
