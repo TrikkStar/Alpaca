@@ -31,7 +31,7 @@ rule token = parse
   | false       { FALSE }
   | list        { LIST } 
   | tuple       { TUPLE }
-  | lett        { LET }
+  | lett as s   { LET s }
   | comment     { token lexbuf }
   | "if"        { IF }
   | "then"      { THEN }
