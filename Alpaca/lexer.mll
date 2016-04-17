@@ -13,10 +13,11 @@ let white = [' ' '\t' '\n' '\r']+ | "//" ([^ '\n' '\r'])*
 let newline = '\n' | '\r' | "\r\n"
 let dblsemi = ";;"
 let comment = "(*" + _ + "*)"
+(*let comment = "(*"+ ['a' - 'z' 'A' - 'Z' '0' - '9']+  "*)" *)
 let float = (digit+ '.'? | digit* frac) exp?
 let true = "true" | "#t"
 let false = "false" | "#f"
-let list = "list" | "lst"
+let list = "list" 
 let tuple = "pair" | "tuple" | "triple"
 let lett = "let"
 let comp = ">" | ">=" | "<" | "<="
@@ -28,7 +29,7 @@ rule token = parse
   | float as x  { FLOAT (float_of_string x) }
   | true        { TRUE }
   | false       { FALSE }
-  | list        { LIST }
+  | list        { LIST } 
   | tuple       { TUPLE }
   | lett        { LET }
   | comment     { token lexbuf }

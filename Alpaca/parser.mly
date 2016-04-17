@@ -4,8 +4,12 @@
 
 %token <float> FLOAT
 %token TRUE FALSE
-%token <exprS list> LIST
-%token <exprS list> TUPLE
+%token <Types.exprS list> LIST
+%token LET
+%token VARIABLE
+%token <Types.exprS list> TUPLE
+%token COMMENT
+%token TUPLE
 %token DBLSEMI
 %token IF THEN ELSE
 %token OR
@@ -51,8 +55,9 @@ expr:
   | TRUE                         { BoolS true }
   | LIST                         { ListS $1 }
   | TUPLE                        { TupleS $1 }
-  | LET expr                     { LetS $2 }
-  | VARIABLE expr                { VarS $2 }
+  | LET expr expr                { LetS $2 $3}
+  | VARIABLE expr                { VarS $2}
+  | COMMENT                      { CommentS }
   | IF expr THEN expr ELSE expr  { IfS ($2, $4, $6) }
   | expr OR expr                 { OrS ($1, $3) }
   | expr AND expr                { AndS ($1, $3) }
