@@ -17,7 +17,6 @@ type exprS = NumS of float
             | LetS of string * exprS
             | FunS of string list * exprS
             | VarS of string
-            | CommentS
 
 type exprC = NumC of float
             | BoolC of bool
@@ -30,7 +29,6 @@ type exprC = NumC of float
             | LetC of string * exprC
             | FunC of string list * exprC
             | VarC of string
-            | CommentC
 
 type exprT = NumT
             | BoolT
