@@ -185,7 +185,7 @@ let rec desugar exprS = match exprS with
   | BoolS b       -> BoolC b
   | IfS (a, b, c) -> IfC (desugar a, desugar b, desugar c)
   | NotS e        -> IfC (desugar e, BoolC false, BoolC true)
-  | OrS (e1, e2)  -> IfC (desugar e1, BoolC true, https://github.com/TrikkStar/Alpaca.gitIfC (desugar e2, BoolC true, BoolC false))
+  | OrS (e1, e2)  -> IfC (desugar e1, BoolC true, IfC (desugar e2, BoolC true, BoolC false))
   | AndS (e1, e2) -> IfC (desugar e1, IfC (desugar e2, BoolC true, BoolC false), BoolC false)
   | ArithS (s, a, b) -> ArithC (s, desugar a, desugar b)
   | CompS (s, a, b) -> CompC (s, desugar a, desugar b)
