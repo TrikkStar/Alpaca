@@ -6,4 +6,4 @@ Alpaca/parser.mli
 Alpaca/lang
 compiled
 *.bak
-Alpaca/.nfs000000000e6478dc00000109
+*.nfs*
