@@ -15,14 +15,9 @@ type exprS = NumS of float
             | ListS of exprS list
             | TupleS of exprS list
             | LetS of string * exprS
-<<<<<<< Updated upstream
-            | FunS of exprS list * exprS
-            (*| VarS of *)
-=======
             | FunS of string list * exprS
             | VarS of string
             | CommentS
->>>>>>> Stashed changes
 
 type exprC = NumC of float
             | BoolC of bool
@@ -32,7 +27,6 @@ type exprC = NumC of float
             | EqC of exprC * exprC
             | ListC of exprC list
             | TupleC of exprC list
-            | ListC of exprC list
             | LetC of string * exprC
             | FunC of string list * exprC
             | VarC of string
@@ -72,10 +66,7 @@ val evaluate : exprC -> exprT * value
 
 (* result post-processing *)
 val valToString : value -> string
-<<<<<<< Updated upstream
 val typToString : exprT -> string
 val outputToString : exprT * value -> string
-=======
 
 val bothToString : string -> string -> string
->>>>>>> Stashed changes

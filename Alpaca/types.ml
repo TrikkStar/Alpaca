@@ -37,14 +37,9 @@ type exprC = NumC of float
 
 type exprT = NumT
             | BoolT
-<<<<<<< Updated upstream
-            | ListT of exprT list
-            | TupleT of exprT list
             | LetT of string * exprT
-=======
             | ListT of exprT
             | TupleT of exprT list
->>>>>>> Stashed changes
             | FunT of exprT * exprT
             | VarT of string
 
@@ -198,14 +193,7 @@ let rec desugar exprS = match exprS with
   | EqS (a, b)    -> EqC (desugar a, desugar b)
   | NeqS (a, b)   -> desugar (NotS (EqS (a, b)))
   | ListS lst     -> map (desugar lst)
-  | ListS lst       -> (match lst with
-                       | [] -> []
-                       | head :: rest -> (desugar head) @ (desugar rest)
-                       )
-  | TupleS lst      -> (match lst with
-                       | [] -> []
-                       | head :: rest -> (desugar head) @ (desugar rest)
-                       ) 
+  | TupleS lst      -> map (desugar lst)
   | FunS (e1, e2) -> desugar (FunC (e1, e2))
   | VarS sym      -> desugar (VarC sym)
 
@@ -227,14 +215,11 @@ let rec interp env r = match r with
   | ListC lst       -> (match lst with
                        | [] -> []
                        | head :: rest -> (interp env head) @ (interp env rest)
-<<<<<<< Updated upstream
-=======
                        )
   | TupleC lst      -> (match lst with
                        | [] -> []
                        | head :: rest -> (interp env head) @ (interp env rest)
                        ) 
->>>>>>> Stashed changes
   | LetC (symb, e1) -> bind symb (interp env e1)
   | VarC sym        -> (**)
 (*| FunC (e1, e2)      -> *)
@@ -262,7 +247,8 @@ let rec valToString r = match r with
                        | [] -> ")"
                        | head :: rest -> valToString head ^ ", " ^ valToString rest)
 
-<<<<<<< Updated upstream
+
+
 let rec typToString r = match r with
   | NumT -> "Num"
   | BoolT -> "Bool"
@@ -274,10 +260,8 @@ let rec typToString r = match r with
       | head :: rest -> typToString head ^ " * " ^ typToString rest)
   (*| LetT of string * exprT
   | FunT of exprT * exprT*)
-=======
 
 
 
 let rec bothToString (type_str, val_str) =
   "(" ^ val_str ^ ", " ^ type_str ^ ")"
->>>>>>> Stashed changes

@@ -30,12 +30,8 @@ rule token = parse
   | false       { FALSE }
   | list        { LIST }
   | tuple       { TUPLE }
-<<<<<<< Updated upstream
   | lett        { LET }
-=======
-  | let         { LET }
   | comment     { COMMENT }
->>>>>>> Stashed changes
   | "if"        { IF }
   | "then"      { THEN }
   | "else"      { ELSE }
