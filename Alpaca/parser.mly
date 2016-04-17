@@ -23,7 +23,7 @@
 %token EQ
 %token NEQ
 %token VARIABLE
-%token LET
+%token <string> LET
 
 %nonassoc FLOAT
 %nonassoc ELSE
@@ -55,7 +55,7 @@ expr:
   | TRUE                         { BoolS true }
   | LIST                         { ListS $1 }
   | TUPLE                        { TupleS $1 }
-  | LET expr expr                { LetS $2 $3}
+  | LET expr                     { LetS ($1 $2) }
   | VARIABLE expr                { VarS $2}
   | COMMENT                      { CommentS }
   | IF expr THEN expr ELSE expr  { IfS ($2, $4, $6) }

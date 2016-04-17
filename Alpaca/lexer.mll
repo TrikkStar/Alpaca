@@ -19,7 +19,7 @@ let true = "true" | "#t"
 let false = "false" | "#f"
 let list = "list" 
 let tuple = "pair" | "tuple" | "triple"
-let lett = "let"
+let lett = "let " + \([a-zA-Z]\)
 let comp = ">" | ">=" | "<" | "<="
 
 rule token = parse
