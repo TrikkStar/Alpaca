@@ -32,8 +32,7 @@ rule token = parse
   | float as x  { FLOAT (float_of_string x) }
   | true        { TRUE }
   | false       { FALSE }
-  | tuple       { TUPLE }
-  | lett as s   { LET s }
+  | lett        { LET }
   | "if"        { IF }
   | "then"      { THEN }
   | "else"      { ELSE }

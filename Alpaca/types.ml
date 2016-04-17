@@ -26,7 +26,6 @@ type exprC = NumC of float
             | ArithC of string * exprC * exprC
             | CompC of string * exprC * exprC
             | EqC of exprC * exprC
-            | ListC of exprC list
             | TupleC of exprC list
             | ListC of exprC list
             | LetC of string * exprC
@@ -94,10 +93,10 @@ let rec getLast lst =
 
 (*    --              --      *)
 
-let rec map (f, lst) =
+(*let rec map (f, lst) =
   match lst with
   | [] -> []
-  | head :: rest -> f (head) :: map rest
+  | head :: rest -> f (head) :: map rest*)
 
 
 
@@ -140,14 +139,13 @@ let eqEval x y =
 
 (* Type-Checker *)
 let rec typecheck env exp = match exp with
-  | NumC -> NumT
-  | BoolC -> BoolT
-  | ListC l -> typeEquals (typecheck env l)
+  | NumC n -> NumT
+  | BoolC b -> BoolT
+  | ListC l -> typecheck env l
   | IfC (a, b, c) ->
     (match (typecheck env a) with
         | BoolT -> typeEquals (typecheck env b) (typecheck env c)
-        | _ -> raise (Type "If-member requires Bool"))| LetT of string * exprT
-            | FunT of exprT * exprT
+        | _ -> raise (Type "If-member requires Bool"))
   | ArithC (a, x, y) ->
     (match a with
       | string ->
@@ -174,7 +172,7 @@ let typeEquals a b =
   match (a, b) with
   | (NumT a, NumT b) -> NumT
   | (BoolT a, BoolT b) -> BoolT
-  | _ -> (Type "Types do not match"))
+  | _ -> raise (Type "Types do not match")
 
 (* INTERPRETER *)
 
@@ -194,7 +192,7 @@ let rec desugar exprS = match exprS with
   | ListS lst     -> map (desugar lst)
   | TupleS lst      -> map (desugar lst)
   | LetS (var, e1) -> desugar (LetC (var, (desugar e1)))
-  | FunS (arg_lst, e1)   -> desugar (FunC (arg_lst, (desugar e1))
+  | FunS (arg_lst, e1)   -> desugar (FunC (arg_lst, (desugar e1)))
   | VarS (sym, e1)  -> desugar (LetC (var, (desugar e1)))
 
 (* You will need to add cases here. *)
@@ -221,17 +219,16 @@ let rec interp env r = match r with
                        | head :: rest -> (interp env head) @ (interp env rest)
                        ) 
   | LetC (var, e1)      -> bind var (interp env e1) env
-  | FunC (arg_lst, e1)   -> (*interp env e1*)
 
 
 (* evaluate : exprC -> val *)
 let evaluate exprC =
   let typ = typecheck [] exprC
-    in let val = interp [] exprC
-      in (typ; val)
+    in let valu = interp [] exprC
+      in (typ; valu)
 
 
-let outputToString typ val = (typToString typ) ^ (valToString val)
+let outputToString typ valu = (typToString typ) ^ (valToString valu)
 
 (* You will need to add cases to this function as you add new value types. *)
 let rec valToString r = match r with
