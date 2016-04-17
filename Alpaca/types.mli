@@ -15,8 +15,9 @@ type exprS = NumS of float
             | ListS of exprS list
             | TupleS of exprS list
             | LetS of string * exprS
-            | FunS of string list * exprS
+            | FunS of string * string list * exprS
             | VarS of string * exprS
+            | CallS of exprS * string list
 
 
 type exprC = NumC of float
@@ -28,8 +29,9 @@ type exprC = NumC of float
             | TupleC of exprC list
             | ListC of exprC list
             | LetC of string * exprC
-            | FunC of string list * exprC
-            (*| VarC of string*)
+            | FunC of string * string list * exprC
+            (*| VarC of string   ---  Not needed? Desugared into a Let statement*)
+            | CallC of exprC * string list
 
 type exprT = NumT
             | BoolT
@@ -43,6 +45,7 @@ type value = Num of float
             | Bool of bool
             | List of value list
             | Tuple of value list
+            | Clos of exprC * (value env)
 
 (* Environment lookup *)
 type 'a env
@@ -54,6 +57,8 @@ val addToFront : 'a -> 'a list -> 'a list
 val isEmpty : 'a list -> bool
 val getFirst : 'a list -> 'a
 val getLast : 'a list -> 'a
+
+val bind_lsts :  'a list -> 'b list -> 'a env -> 'a env
 
 (* typechecking*)
 val typecheck : env -> exprC -> exprT

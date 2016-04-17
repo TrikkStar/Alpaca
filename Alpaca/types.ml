@@ -16,8 +16,9 @@ type exprS = NumS of float
             | ListS of exprS list
             | TupleS of exprS list
             | LetS of string * exprS
-            | FunS of string list * exprS
+            | FunS of string * string list * exprS
             | VarS of string * exprS
+            | CallS of exprS * string list (*takes a func (expr) and args*)
 
 (* You will need to add more cases here. *)
 type exprC = NumC of float
@@ -29,8 +30,9 @@ type exprC = NumC of float
             | TupleC of exprC list
             | ListC of exprC list
             | LetC of string * exprC
-            | FunC of string list * exprC
-            (*| VarC of string*)
+            | FunC of string * string list * exprC
+            (*| VarC of string   ---  Not needed? Desugared into a Let statement*)
+            | CallC of exprC * string list
 
 
 type exprT = NumT
@@ -46,6 +48,7 @@ type value = Num of float
             | Bool of bool
             | List of value list
             | Tuple of value list
+            | Clos of exprC * (value env)
 
 type 'a env = (string * 'a) list
 let empty = []
@@ -98,6 +101,19 @@ let rec getLast lst =
   | [] -> []
   | head :: rest -> f (head) :: map rest*)
 
+
+
+(*   --  function_arg binding  --   *)
+
+let bind_lsts (lst_str, lst_vals) =
+  match lst_str with
+  | [] -> env
+  | head_str :: rest -> 
+
+          (match lst_vals with
+          | [] -> env
+          | head_vals :: rest_vals -> (bind head_str head_vals env) :: bind_lsts (rest, rest_vals) 
+          )
 
 
 (*
@@ -188,11 +204,15 @@ let rec desugar exprS = match exprS with
   | CompS (s, a, b) -> CompC (s, desugar a, desugar b)
   | EqS (a, b)    -> EqC (desugar a, desugar b)
   | NeqS (a, b)   -> desugar (NotS (EqS (a, b)))
-  (*| ListS lst     -> map (desugar lst)
-  | TupleS lst      -> map (desugar lst)
-  | LetS (var, e1) -> desugar (LetC (var, (desugar e1)))
-  | FunS (arg_lst, e1)   -> desugar (FunC (arg_lst, (desugar e1)))
-  | VarS (sym, e1)  -> desugar (LetC (var, (desugar e1)))*)
+(*
+  | ListS lst             -> map (desugar lst)
+  | TupleS lst            -> map (desugar lst)
+  | LetS (var, e1)        -> desugar (LetC (var, (desugar e1)))
+  | FunS (name, args, e1) -> desugar (FunC (name, args, (desugar e1))
+  | VarS (sym, e1)        -> desugar (LetC (var, (desugar e1)))
+  | CallS (func, arg_lst) -> desugar (CallC (desugar func, arg_lst)) 
+*)
+
 
 (* You will need to add cases here. *)
 (* interp : Value env -> exprC -> value *)
@@ -201,23 +221,50 @@ let rec interp env r = match r with
   | BoolC b       -> Bool b
   | IfC (a, b, c) ->
     (match (interp env a) with
-        | Bool x ->
+        | Bool x  ->
             if x
             then interp env b
             else interp env c
         | _ -> raise (Interp "Error: boolean statement needed"))
+
   | ArithC (a, x, y) -> arithEval a (interp  env x) (interp env y)
   | CompC (a, x, y) -> compEval a (interp  env x) (interp env y)
-  (*| EqC (x, y) ->  eqEval (interp env x) (interp env y)
-  | ListC lst       -> (match lst with
-                       | [] -> []
-                       | head :: rest -> (interp env head) @ (interp env rest)
-                       )
-  | TupleC lst      -> (match lst with
-                       | [] -> []
-                       | head :: rest -> (interp env head) @ (interp env rest)
-                       ) 
-  | LetC (var, e1)      -> bind var (interp env e1) env*)
+(*
+  | EqC (x, y)       ->  eqEval (interp env x) (interp env y)
+
+  | ListC lst        -> (match lst with
+                         | [] -> []
+                         | head :: rest -> (interp env head) @ (interp env rest)
+                         )
+
+  | TupleC lst       -> (match lst with
+                        | [] -> []
+                        | head :: rest -> (interp env head) @ (interp env rest)
+                        ) 
+
+  | LetC (var, e1)         -> bind var (interp env e1) env
+  | FunC _                 -> Clos (r (* FunC *), env)
+
+  | CallC (func, arg_lst)  -> 
+
+        let funct_val = (interp env func) in              (*  lookup args for func                          *)
+        let args_val  = (interp env arg_lst)              (*  bind func_args with arg_vals then extend env  *)
+          in (match funct_val with                        (*  interp func_body with new, extended env       *)
+              | Clos (funct, envr) ->                      
+
+                      (match funct with
+                      | (fname, arg_lst, body_expr) -> 
+
+                                let new_env = bind_lsts (arg_lst, args_val) envr in
+                                (*let fun_rec = *) interp new_env body_expr
+
+
+                      | _ -> raise (Interp "Error: Not Previously Defined")
+                      )
+
+              | _ -> raise (Interp "Error: Not a Function")
+              )
+*)
 
 
 (* evaluate : exprC -> val *)
@@ -231,7 +278,8 @@ let evaluate exprC =
 let rec valToString r = match r with
   | Num i           -> string_of_float i
   | Bool b          -> string_of_bool b
-  (*| List lst        -> "[" ^
+(*
+  | List lst        -> "[" ^
                        (match lst with
                        | last :: [] -> valToString last ^ "]"
                        | head :: rest -> valToString head ^ ", " ^ valToString rest)
@@ -240,19 +288,22 @@ let rec valToString r = match r with
                        (match lst with
                        | last :: [] -> valToString last ^ ")"
                        | head :: rest -> valToString head ^ ", " ^ valToString rest)
-                       | [] -> ")"*)
+                       | [] -> ")"
+*)
 
 let rec typToString r = match r with
   | NumT -> "Num"
   | BoolT -> "Bool"
-  (*| ListT l ->
+(*
+  | ListT l ->
     (match l with
       | head :: rest -> typToString head ^ " * " ^ typToString rest)
   | TupleT t ->
     (match t with
       | head :: rest -> typToString head ^ " * " ^ typToString rest)
   | LetT of string * exprT
-  | FunT of exprT * exprT*)
+  | FunT of exprT * exprT
+*)
 
 let outputToString typ valu = (typToString typ) ^ (valToString valu)
 
