@@ -1,8 +1,8 @@
 #Description of specific syntax and semantics of *Alpaca*
 
-- Tupels: `(5, 7)`
+- Tuples: `(5, 7)`
 
-- Variable declaration: `let ex1 = ex2`
+- Variable declaration: `let alphanumeric_string = ex2`
 
 - Function definition: `let function_name (ex1, ex2, ...) = ex3`
 
@@ -18,7 +18,7 @@
 
 - Conditionals: `if ex1 then ex2 else ex3` `ex1 and ex2` `ex1 or ex2` `not ex1`
 
-- Arithmatic operators: `ex1 + ex2 - ex3 * ex4 / ex5`
+- Arithmetic operators: `ex1 + ex2 - ex3 * ex4 / ex5`
 
 - Comparison operators: `ex1 < ex2` `ex1 <= ex2` `ex1 > ex2` `ex1 >= ex2`
 
