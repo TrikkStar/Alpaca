@@ -4,12 +4,9 @@
 
 %token <float> FLOAT
 %token TRUE FALSE
-%token <list> LIST
-%token LET
-%token VARIABLE
-%token <list> TUPLE
+%token <expr list> LIST
+%token <expr list> TUPLE
 %token COMMENT
-%token TUPLE
 %token DBLSEMI
 %token IF THEN ELSE
 %token OR
@@ -22,6 +19,8 @@
 %token <string> COMPOP
 %token EQ
 %token NEQ
+%token VARIABLE
+%token LET
 
 %nonassoc FLOAT
 %nonassoc ELSE
