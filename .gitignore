@@ -6,3 +6,4 @@ Alpaca/parser.mli
 Alpaca/lang
 compiled
 *.bak
+Alpaca/
