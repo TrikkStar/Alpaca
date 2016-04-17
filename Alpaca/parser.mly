@@ -2,13 +2,13 @@
   open Types
 %}
 
+%token <string> IDENTIFIER
 %token <float> FLOAT
 %token TRUE FALSE
 %token <Types.exprS list> LIST
 %token LET
 %token VARIABLE
 %token <Types.exprS list> TUPLE
-%token COMMENT
 %token TUPLE
 %token DBLSEMI
 %token IF THEN ELSE
@@ -20,17 +20,20 @@
 %token TIMES
 %token DIVIDE
 %token <string> COMPOP
+%token EQS
 %token EQ
 %token NEQ
 %token VARIABLE
-%token <string> LET
+%token LET
 
+%nonassoc IDENTIFIER
 %nonassoc FLOAT
 %nonassoc ELSE
 %nonassoc OR AND
 %nonassoc EQ NEQ
 %nonassoc NOT
 %nonassoc COMPOP
+%nonassoc EQS
 %nonassoc VARIABLE
 %nonassoc LET
 
@@ -47,6 +50,8 @@ main:
 
 headEx:
   | expr                         { $1 }
+  | LET IDENTIFIER EQS expr      { LetS ($2, $4) }
+  | VARIABLE IDENTIFIER EQS expr { VarS ($2, $4) }
 ;
 
 expr:
@@ -55,9 +60,6 @@ expr:
   | TRUE                         { BoolS true }
   | LIST                         { ListS $1 }
   | TUPLE                        { TupleS $1 }
-  | LET expr                     { LetS ($1 $2) }
-  | VARIABLE expr                { VarS $2}
-  | COMMENT                      { CommentS }
   | IF expr THEN expr ELSE expr  { IfS ($2, $4, $6) }
   | expr OR expr                 { OrS ($1, $3) }
   | expr AND expr                { AndS ($1, $3) }
