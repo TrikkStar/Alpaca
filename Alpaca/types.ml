@@ -136,12 +136,17 @@ let eqEval x y =
   | (Num a, Num b) -> Bool (a = b)
   | _ -> Bool false
 
+let typeEquals a b =
+  match (a, b) with
+  | (NumT, NumT) -> NumT
+  | (BoolT, BoolT) -> BoolT
+  | _ -> raise (Type "Types do not match")
+
 
 (* Type-Checker *)
 let rec typecheck env exp = match exp with
   | NumC n -> NumT
   | BoolC b -> BoolT
-  | ListC l -> typecheck env l
   | IfC (a, b, c) ->
     (match (typecheck env a) with
         | BoolT -> typeEquals (typecheck env b) (typecheck env c)
@@ -160,19 +165,13 @@ let rec typecheck env exp = match exp with
   | EqC (x, y) -> typeEquals (typecheck env x) (typecheck env y)
   | TupleC t ->
     (match t with
-    | head :: tail -> typecheck env head :: typecheck env tail
+    | head :: tail -> (typecheck env head) :: (typecheck env tail)
     | [] -> [])
   | ListC l ->
     (match l with
-    | head :: tail -> typecheck env head :: typecheck env tail
+    | head :: tail -> (typecheck env head) :: (typecheck env tail)
     | [] -> [])
 
-
-let typeEquals a b =
-  match (a, b) with
-  | (NumT a, NumT b) -> NumT
-  | (BoolT a, BoolT b) -> BoolT
-  | _ -> raise (Type "Types do not match")
 
 (* INTERPRETER *)
 
