@@ -302,7 +302,7 @@ let rec typToString r = match r with
   | FunT of exprT * exprT
 *)
 
-let outputToString (typ, valu) = (typToString typ) ^ (valToString valu)
+let outputToString (typ, valu) = (typToString typ) ^ " " ^ (valToString valu)
 
 let rec bothToString (type_str, val_str) =
   "(" ^ val_str ^ ", " ^ type_str ^ ")"
