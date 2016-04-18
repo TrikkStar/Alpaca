@@ -158,6 +158,11 @@ let typeEquals a b =
   | (BoolT, BoolT) -> BoolT
   | _ -> raise (Type "Types do not match")
 
+let rec listType l =
+  match l with
+  | head :: tail ->
+  | [] ->
+
 
 (* Type-Checker *)
 let rec typecheck env exp = match exp with
@@ -179,14 +184,8 @@ let rec typecheck env exp = match exp with
       | string -> typeEquals (typecheck env x) (typecheck env y)
       | _ -> raise (Type "Operator not given for comparison operation"))
   | EqC (x, y) -> typeEquals (typecheck env x) (typecheck env y)
-  | TupleC t ->
-    (match t with
-    | head :: tail -> (typecheck env head) :: (typecheck env tail)
-    | [] -> [])
-  | ListC l ->
-    (match l with
-    | head :: tail -> (typecheck env head) :: (typecheck env tail)
-    | [] -> [])
+  | TupleC t -> TupleT (List.map (fun (x) -> typecheck env x) t)
+(*  | ListC l -> ListT listType (List.map (fun (x) -> typecheck env x) l)*)
 
 
 (* INTERPRETER *)
