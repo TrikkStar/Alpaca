@@ -179,14 +179,14 @@ let rec typecheck env exp = match exp with
       | string -> typeEquals (typecheck env x) (typecheck env y)
       | _ -> raise (Type "Operator not given for comparison operation"))
   | EqC (x, y) -> typeEquals (typecheck env x) (typecheck env y)
-  (*| TupleC t ->
+  | TupleC t ->
     (match t with
     | head :: tail -> (typecheck env head) :: (typecheck env tail)
     | [] -> [])
   | ListC l ->
     (match l with
     | head :: tail -> (typecheck env head) :: (typecheck env tail)
-    | [] -> [])*)
+    | [] -> [])
 
 
 (* INTERPRETER *)
@@ -224,44 +224,31 @@ let rec interp env r = match r with
             then interp env b
             else interp env c
         | _ -> raise (Interp "Error: boolean statement needed"))
-
   | ArithC (a, x, y) -> arithEval a (interp  env x) (interp env y)
   | CompC (a, x, y) -> compEval a (interp  env x) (interp env y)
   | EqC (x, y)       ->  eqEval (interp env x) (interp env y)
-(*
   | ListC lst        -> (match lst with
                          | last :: [] -> (interp env last)
                          | head :: rest -> (interp env head) @ (interp env (ListC rest))
                          )
-
   | TupleC lst       -> (match lst with
                         | [] -> []
                         | head :: rest -> (interp env head) @ (interp env rest)
                         ) 
-
   | LetC (var, e1)         -> bind var (interp env e1) env
   | FunC _                 -> Clos (r (* FunC *), env)
-
   | CallC (func, arg_lst)  -> 
-
         let funct_val = (interp env func) in              (*  lookup args for func                          *)
         let args_val  = (interp env arg_lst)              (*  bind func_args with arg_vals then extend env  *)
           in (match funct_val with                        (*  interp func_body with new, extended env       *)
               | Clos (funct, envr) ->                      
-
                       (match funct with
                       | (fname, arg_lst, body_expr) -> 
 
                                 let new_env = bind_lsts (arg_lst, args_val) envr in
                                 (*let fun_rec = *) interp new_env body_expr
-
-
-                      | _ -> raise (Interp "Error: Not Previously Defined")
-                      )
-
-              | _ -> raise (Interp "Error: Not a Function")
-              )
-*)
+                      | _ -> raise (Interp "Error: Not Previously Defined"))
+              | _ -> raise (Interp "Error: Not a Function"))
 
 
 (* evaluate : exprC -> val *)
@@ -275,7 +262,6 @@ let evaluate exprC =
 let rec valToString r = match r with
   | Num i           -> string_of_float i
   | Bool b          -> string_of_bool b
-(*
   | List lst        -> "[" ^
                        (match lst with
                        | last :: [] -> valToString last ^ "]"
@@ -286,21 +272,18 @@ let rec valToString r = match r with
                        | last :: [] -> valToString last ^ ")"
                        | head :: rest -> valToString head ^ ", " ^ valToString rest)
                        | [] -> ")"
-*)
 
 let rec typToString r = match r with
   | NumT -> "Num"
   | BoolT -> "Bool"
-(*
   | ListT l ->
     (match l with
       | head :: rest -> typToString head ^ " * " ^ typToString rest)
   | TupleT t ->
     (match t with
       | head :: rest -> typToString head ^ " * " ^ typToString rest)
-  | LetT of string * exprT
-  | FunT of exprT * exprT
-*)
+  | LetT (string s, e) -> "var: " ^ s " -> " ^ typToString e
+  | FunT (e1, e2) ->  typToString e1 ^ " -> " ^ typToString e2
 
 let outputToString (typ, valu) = (typToString typ) ^ " " ^ (valToString valu)
 
