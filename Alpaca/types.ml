@@ -111,9 +111,9 @@ let rec bind_lsts (lst_str, lst_vals, envr) =
   match (lst_str, lst_vals) with
   | ([], []) -> envr
   | (_, []) | ([], _) -> raise (Failure "Not Correct Amount of Arguments")
-  | (head_str :: rest, head_vals :: rest_vals) -> 
+  | (head_str :: rest, head_vals :: rest_vals) ->
         bind head_str head_vals (bind_lsts (rest, rest_vals, envr))
-      
+
 
 
 (*
@@ -234,16 +234,16 @@ let rec interp env r = match r with
   | TupleC lst       -> (match lst with
                         | [] -> []
                         | head :: rest -> (interp env head) @ (interp env rest)
-                        ) 
+                        )
   | LetC (var, e1)         -> bind var (interp env e1) env
   | FunC _                 -> Clos (r (* FunC *), env)
-  | CallC (func, arg_lst)  -> 
+  | CallC (func, arg_lst)  ->
         let funct_val = (interp env func) in              (*  lookup args for func                          *)
         let args_val  = (interp env arg_lst)              (*  bind func_args with arg_vals then extend env  *)
           in (match funct_val with                        (*  interp func_body with new, extended env       *)
-              | Clos (funct, envr) ->                      
+              | Clos (funct, envr) ->
                       (match funct with
-                      | (fname, arg_lst, body_expr) -> 
+                      | (fname, arg_lst, body_expr) ->
 
                                 let new_env = bind_lsts (arg_lst, args_val) envr in
                                 (*let fun_rec = *) interp new_env body_expr
@@ -282,7 +282,7 @@ let rec typToString r = match r with
   | TupleT t ->
     (match t with
       | head :: rest -> typToString head ^ " * " ^ typToString rest)
-  | LetT (string s, e) -> "var: " ^ s " -> " ^ typToString e
+  | LetT (str, e) -> "var: " ^ str " -> " ^ typToString e
   | FunT (e1, e2) ->  typToString e1 ^ " -> " ^ typToString e2
 
 let outputToString (typ, valu) = (typToString typ) ^ " " ^ (valToString valu)
