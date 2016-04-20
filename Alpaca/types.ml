@@ -214,7 +214,7 @@ let rec desugar exprS = match exprS with
   | LetS (var, e1)        -> LetC (var, (desugar e1))
   | FunS (name, args, e1) -> FunC (name, args, (desugar e1))
   | VarS (sym, e1)        -> LetC (sym, (desugar e1))
-  | CallS (func, arg_lst) -> CallC (desugar func, desugar arg_lst)
+  | CallS (func, arg_lst) -> CallC (desugar func, map (desugar, arg_lst))
 
 
 (* You will need to add cases here. *)
@@ -238,11 +238,11 @@ let rec interp env r = match r with
   | FunC _                 -> Clos (r (* FunC *), env)
   | CallC (func, arg_lst)  ->
         let funct_val = (interp env func) in              (*  lookup args for func                          *)
-        let args_val  = (interp env arg_lst)              (*  bind func_args with arg_vals then extend env  *)
+        let args_val  = map ((interp env), arg_lst)       (*  bind func_args with arg_vals then extend env  *)
           in (match funct_val with                        (*  interp func_body with new, extended env       *)
               | Clos (funct, envr) ->
                       (match funct with
-                      | (fname, arg_lst, body_expr) ->
+                      | FunC (fname, arg_lst, body_expr) ->
 
                                 let new_env = bind_lsts (arg_lst, args_val, envr) in
                                 (*let fun_rec = *) interp new_env body_expr
@@ -263,14 +263,16 @@ let rec valToString r = match r with
   | Bool b          -> string_of_bool b
   | List lst        -> "[" ^
                        (match lst with
-                       | last :: [] -> valToString last ^ "]"
-                       | head :: rest -> valToString head ^ ", " ^ valToString rest)
                        | [] -> "]"
+                       | head :: rest -> valToString head ^ ", " ^ valToString (List rest)
+                       )
+                      
   | Tuple lst       -> "(" ^
                        (match lst with
-                       | last :: [] -> valToString last ^ ")"
-                       | head :: rest -> valToString head ^ ", " ^ valToString rest)
                        | [] -> ")"
+                       | head :: rest -> valToString head ^ ", " ^ valToString (List rest)
+                       )
+
 
 let rec typToString r = match r with
   | NumT -> "Num"
