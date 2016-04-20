@@ -159,10 +159,15 @@ let typeEquals a b =
   | (BoolT, BoolT) -> BoolT
   | _ -> raise (Type "Types do not match")
 
-(*let rec listType l =
+let rec listType l =
   match l with
   | head :: tail ->
-  | [] -> *)
+    (match head with
+      | NumT ->
+        if
+      | BoolT ->)
+  | head :: [] ->
+  | [] -> raise (Type "Empty list not allowed")
 
 
 (* Type-Checker *)
