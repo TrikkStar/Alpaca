@@ -35,6 +35,7 @@ type exprC = NumC of float
 
 type exprT = NumT
             | BoolT
+            | AnyT
             | LetT of string * exprT
             | ListT of exprT
             | TupleT of exprT list
@@ -49,7 +50,7 @@ type value = Num of float
             | Tuple of value list
             | Clos of exprC * (value env)
             | Let of value env
-            
+
 (* Environment lookup *)
 
 val empty : 'a env

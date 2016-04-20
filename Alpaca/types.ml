@@ -34,9 +34,9 @@ type exprC = NumC of float
             (*| VarC of string   ---  Not needed? Desugared into a Let statement*)
             | CallC of exprC * exprC list
 
-
 type exprT = NumT
             | BoolT
+            | AnyT
             | LetT of string * exprT
             | ListT of exprT
             | TupleT of exprT list
@@ -164,10 +164,14 @@ let rec listType l =
   | head :: tail ->
     (match head with
       | NumT ->
-        if
-      | BoolT ->)
-  | head :: [] ->
-  | [] -> raise (Type "Empty list not allowed")
+        if List.for_all (fun (x) -> x = NumT) l
+        then NumT
+        else raise (Type "All elements in a list must be the same type")
+      | BoolT ->
+        if List.for_all (fun (x) -> x = BoolT) l
+        then NumT
+        else raise (Type "All elements in a list must be the same type"))
+  | [] -> AnyT
 
 
 (* Type-Checker *)
@@ -176,7 +180,7 @@ let rec typecheck env exp = match exp with
   | BoolC b -> BoolT
   | IfC (a, b, c) ->
     (match (typecheck env a) with
-        | BoolT -> typeEquals (typecheck env b) (typecheck env c)
+        | BoolT -> typeEquals (typecheck env b) (typecheck env c)(*these don't necessairly need to be equal*)
         | _ -> raise (Type "If-member requires Bool"))
   | ArithC (a, x, y) ->
     (match a with
@@ -191,7 +195,7 @@ let rec typecheck env exp = match exp with
       | _ -> raise (Type "Operator not given for comparison operation"))
   | EqC (x, y) -> typeEquals (typecheck env x) (typecheck env y)
   | TupleC t -> TupleT (List.map (fun (x) -> typecheck env x) t)
-(*  | ListC l -> ListT listType (List.map (fun (x) -> typecheck env x) l)*)
+  | ListC l -> ListT (listType (List.map (fun (x) -> typecheck env x) l))
 
 
 (* INTERPRETER *)
@@ -206,15 +210,15 @@ let rec desugar exprS = match exprS with
   | OrS (e1, e2)  -> IfC (desugar e1, BoolC true, IfC (desugar e2, BoolC true, BoolC false))
   | AndS (e1, e2) -> IfC (desugar e1, IfC (desugar e2, BoolC true, BoolC false), BoolC false)
   | ArithS (s, a, b) -> ArithC (s, desugar a, desugar b)
-  | CompS (s, a, b) -> CompC (s, desugar a, desugar b)
-  | EqS (a, b)    -> EqC (desugar a, desugar b)
-  | NeqS (a, b)   -> desugar (NotS (EqS (a, b)))
+  | CompS (s, a, b)  -> CompC (s, desugar a, desugar b)
+  | EqS (a, b)       -> EqC (desugar a, desugar b)
+  | NeqS (a, b)      -> desugar (NotS (EqS (a, b)))
   | ListS lst             -> ListC (map (desugar, lst))
   | TupleS lst            -> TupleC (map (desugar, lst))
   | LetS (var, e1)        -> LetC (var, (desugar e1))
   | FunS (name, args, e1) -> FunC (name, args, (desugar e1))
   | VarS (sym, e1)        -> LetC (sym, (desugar e1))
-  | CallS (func, arg_lst) -> CallC (desugar func, desugar arg_lst)
+(*  | CallS (func, arg_lst) -> CallC (desugar func, desugar arg_lst)*)
 
 
 (* You will need to add cases here. *)
@@ -236,7 +240,7 @@ let rec interp env r = match r with
   | TupleC lst       -> Tuple (List.map (interp env) lst)
   | LetC (var, e1)         -> Let (bind var (interp env e1) env)
   | FunC _                 -> Clos (r (* FunC *), env)
-  | CallC (func, arg_lst)  ->
+(*  | CallC (func, arg_lst)  ->
         let funct_val = (interp env func) in              (*  lookup args for func                          *)
         let args_val  = (interp env arg_lst)              (*  bind func_args with arg_vals then extend env  *)
           in (match funct_val with                        (*  interp func_body with new, extended env       *)
@@ -247,7 +251,7 @@ let rec interp env r = match r with
                                 let new_env = bind_lsts (arg_lst, args_val, envr) in
                                 (*let fun_rec = *) interp new_env body_expr
                       | _ -> raise (Interp "Error: Not Previously Defined"))
-              | _ -> raise (Interp "Error: Not a Function"))
+              | _ -> raise (Interp "Error: Not a Function"))*)
 
 
 (* evaluate : exprC -> val *)
@@ -261,16 +265,8 @@ let evaluate exprC =
 let rec valToString r = match r with
   | Num i           -> string_of_float i
   | Bool b          -> string_of_bool b
-  | List lst        -> "[" ^
-                       (match lst with
-                       | last :: [] -> valToString last ^ "]"
-                       | head :: rest -> valToString head ^ ", " ^ valToString rest)
-                       | [] -> "]"
-  | Tuple lst       -> "(" ^
-                       (match lst with
-                       | last :: [] -> valToString last ^ ")"
-                       | head :: rest -> valToString head ^ ", " ^ valToString rest)
-                       | [] -> ")"
+  | List lst        -> "[" ^ List.iter ((fun (x) -> x ^ ", ") (List.map((fun (x) -> valToString x) lst))) ^ "]"
+  | Tuple lst       -> "(" ^ List.iter ((fun (x) -> x ^ ", ") (List.map((fun (x) -> valToString x) lst))) ^ ")"
 
 let rec typToString r = match r with
   | NumT -> "Num"
