@@ -283,10 +283,10 @@ let rec typToString r = match r with
   | BoolT -> "Bool"
   | ListT l ->
     (match l with
-      | head :: rest -> typToString head ^ " * " ^ typToString rest)
+      | head :: rest -> typToString head ^ " * " ^ typToString (List rest))
   | TupleT t ->
     (match t with
-      | head :: rest -> typToString head ^ " * " ^ typToString rest)
+      | head :: rest -> typToString head ^ " * " ^ typToString (List rest))
   | LetT (str, e) -> "var: " ^ str " -> " ^ typToString e
   | FunT (e1, e2) ->  typToString e1 ^ " -> " ^ typToString e2
 
