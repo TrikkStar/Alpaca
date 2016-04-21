@@ -195,7 +195,8 @@ let rec typecheck env exp = match exp with
   | EqC (x, y) -> typeEquals (typecheck env x) (typecheck env y)
   | TupleC t -> TupleT (List.map (fun (x) -> typecheck env x) t)
   | ListC l -> ListT (listType (List.map (fun (x) -> typecheck env x) l))
-  | FunC (x, y) -> FunT (typecheck env x) (typecheck env y) (* this is incorrect *)
+  | FunC (str, lst, x) -> FunT (typecheck env x) (typecheck env x) (* need to figure out how to typecheck the arg list *)
+  | _ -> raise (Type "Unknown Type")
 
 
 (* INTERPRETER *)
