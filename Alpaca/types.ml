@@ -41,7 +41,6 @@ type exprT = NumT
             | ListT of exprT
             | TupleT of exprT list
             | FunT of exprT * exprT
-            | VarT of string
 
 type 'a env = (string * 'a) list
 
@@ -196,6 +195,7 @@ let rec typecheck env exp = match exp with
   | EqC (x, y) -> typeEquals (typecheck env x) (typecheck env y)
   | TupleC t -> TupleT (List.map (fun (x) -> typecheck env x) t)
   | ListC l -> ListT (listType (List.map (fun (x) -> typecheck env x) l))
+  | FunC (x, y) -> FunT (typecheck env x) (typecheck env y) (* this is incorrect *)
 
 
 (* INTERPRETER *)
@@ -240,7 +240,7 @@ let rec interp env r = match r with
   | TupleC lst       -> Tuple (List.map (interp env) lst)
   | LetC (var, e1)         -> Let (bind var (interp env e1) env)
   | FunC _                 -> Clos (r (* FunC *), env)
-(*  | CallC (func, arg_lst)  ->
+  | CallC (func, arg_lst)  ->
         let funct_val = (interp env func) in              (*  lookup args for func                          *)
         let args_val  = map ((interp env), arg_lst)       (*  bind func_args with arg_vals then extend env  *)
           in (match funct_val with                        (*  interp func_body with new, extended env       *)
@@ -251,7 +251,7 @@ let rec interp env r = match r with
                                 let new_env = bind_lsts (arg_lst, args_val, envr) in
                                 (*let fun_rec = *) interp new_env body_expr
                       | _ -> raise (Interp "Error: Not Previously Defined"))
-              | _ -> raise (Interp "Error: Not a Function"))*)
+              | _ -> raise (Interp "Error: Not a Function"))
 
 
 (* evaluate : exprC -> val *)

@@ -39,7 +39,6 @@ type exprT = NumT
             | ListT of exprT
             | TupleT of exprT list
             | FunT of exprT * exprT
-            | VarT of string
 
 type 'a env
 

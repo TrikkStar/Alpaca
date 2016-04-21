@@ -33,8 +33,6 @@ rule token = parse
   | true        { TRUE }
   | false       { FALSE }
   | lett        { LET }
-  | list        { LIST }
-  | tuple       { TUPLE }
   | "if"        { IF }
   | "then"      { THEN }
   | "else"      { ELSE }
