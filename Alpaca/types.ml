@@ -275,18 +275,16 @@ let rec valToString r = match r with
   | Tuple lst       -> "(" ^
                        (match lst with
                        | [] -> ")"
-                       | head :: rest -> valToString head ^ ", " ^ valToString (List rest)
+                       | head :: rest -> valToString head ^ ", " ^ valToString (Tuple rest)
                        )
 
 let rec typToString r = match r with
   | NumT -> "Num"
   | BoolT -> "Bool"
-  | ListT l ->
-    (match l with
-      | head :: rest -> typToString head ^ " * " ^ typToString (List rest))
+  | ListT l -> "List: " ^ typToString l
   | TupleT t ->
     (match t with
-      | head :: rest -> typToString head ^ " * " ^ typToString (List rest))
+      | head :: rest -> typToString head ^ " * " ^ typToString (TupleT rest))
   | LetT (str, e) -> "var: " ^ str " -> " ^ typToString e
   | FunT (e1, e2) ->  typToString e1 ^ " -> " ^ typToString e2
 
