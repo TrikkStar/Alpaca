@@ -35,6 +35,7 @@
 %nonassoc COMPOP
 %nonassoc EQS
 %nonassoc VARIABLE
+%nonassoc LIST TUPLE
 %nonassoc LET
 
 %left PLUS MINUS

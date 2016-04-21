@@ -18,7 +18,7 @@ let comment = "(*" _* "*)"
 let float = (digit+ '.'? | digit* frac) exp?
 let true = "true" | "#t"
 let false = "false" | "#f"
-let list = "list" 
+let list = "list"
 let tuple = "pair" | "tuple" | "triple"
 let lett = "let"
 let comp = ">" | ">=" | "<" | "<="
@@ -33,6 +33,8 @@ rule token = parse
   | true        { TRUE }
   | false       { FALSE }
   | lett        { LET }
+  | list        { LIST }
+  | tuple       { TUPLE }
   | "if"        { IF }
   | "then"      { THEN }
   | "else"      { ELSE }
