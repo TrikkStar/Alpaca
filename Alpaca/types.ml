@@ -265,8 +265,6 @@ let evaluate exprC =
 let rec valToString r = match r with
   | Num i           -> string_of_float i
   | Bool b          -> string_of_bool b
-  (* | List lst        -> "[" ^ List.iter ((fun (x) -> x ^ ", ") (List.map((fun (x) -> valToString x) lst))) ^ "]"
-  | Tuple lst       -> "(" ^ List.iter ((fun (x) -> x ^ ", ") (List.map((fun (x) -> valToString x) lst))) ^ ")" *)
   | List lst        -> "[" ^
                        (match lst with
                        | [] -> "]"
@@ -285,7 +283,7 @@ let rec typToString r = match r with
   | TupleT t ->
     (match t with
       | head :: rest -> typToString head ^ " * " ^ typToString (TupleT rest))
-  | LetT (str, e) -> "var: " ^ str " -> " ^ typToString e
+  | LetT (str, e) -> "var: " ^ str ^ " -> " ^ typToString e
   | FunT (e1, e2) ->  typToString e1 ^ " -> " ^ typToString e2
 
 let outputToString (typ, valu) = (typToString typ) ^ " " ^ (valToString valu)
