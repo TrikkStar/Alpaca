@@ -247,7 +247,7 @@ let rec interp env r = match r with
                       | FunC (fname, arg_lst, body_expr) ->
 
                                 let new_env = bind_lsts (arg_lst, args_val, envr) in
-                                (*(interp (bind (fname, Clos (funct, envr), new_env)) body_expr)  -- recursive? *)
+                                (interp (bind (fname, Clos (funct, envr), new_env)) body_expr)  -- recursive? 
                                 (interp new_env body_expr)
                       | _ -> raise (Interp "Error: Not Previously Defined"))
               | _ -> raise (Interp "Error: Not a Function"))
