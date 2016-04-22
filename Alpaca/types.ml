@@ -76,10 +76,7 @@ let addToFront element lst =
   | head :: rest -> element :: head :: rest
 
 (* test of a list is empty *)
-let isEmpty lst =
-  if lst = empty
-  then true
-  else false
+let isEmpty lst = (lst = empty)
 
 
 (* access the head of a list *)
@@ -195,7 +192,7 @@ let rec typecheck env exp = match exp with
   | EqC (x, y) -> typeEquals (typecheck env x) (typecheck env y)
   | TupleC t -> TupleT (List.map (fun (x) -> typecheck env x) t)
   | ListC l -> ListT (listType (List.map (fun (x) -> typecheck env x) l))
-  | FunC (str, lst, x) -> FunT (typecheck env x) (typecheck env x) (* need to figure out how to typecheck the arg list *)
+  (*| FunC (str, lst, x) -> FunT (typecheck env x) (typecheck env x) ( need to figure out how to typecheck the arg list *)
   | _ -> raise (Type "Unknown Type")
 
 
@@ -250,7 +247,8 @@ let rec interp env r = match r with
                       | FunC (fname, arg_lst, body_expr) ->
 
                                 let new_env = bind_lsts (arg_lst, args_val, envr) in
-                                (*let fun_rec = *) interp new_env body_expr
+                                (*(interp (bind (fname, Clos (funct, envr), new_env)) body_expr)  -- recursive? *)
+                                (interp new_env body_expr)
                       | _ -> raise (Interp "Error: Not Previously Defined"))
               | _ -> raise (Interp "Error: Not a Function"))
 
