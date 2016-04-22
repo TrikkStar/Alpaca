@@ -76,10 +76,7 @@ let addToFront element lst =
   | head :: rest -> element :: head :: rest
 
 (* test of a list is empty *)
-let isEmpty lst =
-  if lst = empty
-  then true
-  else false
+let isEmpty lst = (lst = empty)
 
 
 (* access the head of a list *)
