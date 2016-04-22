@@ -50,7 +50,7 @@ type value = Num of float
             | List of value list
             | Tuple of value list
             | Clos of exprC * (value env)
-          (*| Let of value env *)
+          (*| Let of value env   -- not needed *)
 
 
 let empty = []
@@ -241,7 +241,7 @@ let rec interp env r = match r with
   | ListC lst        -> List (List.map (interp env) lst)
   | TupleC lst       -> Tuple (List.map (interp env) lst)
   | LetC (var, e1)         -> let eval_e1 = (interp env e1) in
-                              let ref_v := (bind var env eval_e1)
+                              (global_ref := (bind var eval_e1 env); eval_e1)
   | FunC _                 -> Clos (r (* FunC *), env)
   | CallC (func, arg_lst)  ->
         let funct_val = (interp env func) in              (*  lookup args for func                          *)

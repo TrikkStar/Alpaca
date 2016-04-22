@@ -47,7 +47,7 @@ type value = Num of float
             | List of value list
             | Tuple of value list
             | Clos of exprC * (value env)
-            | Let of value env
+            (*| Let of value env  -- not needed *)
 
 (* Environment lookup *)
 
