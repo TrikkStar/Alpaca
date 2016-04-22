@@ -50,7 +50,7 @@ type value = Num of float
             | List of value list
             | Tuple of value list
             | Clos of exprC * (value env)
-            | Let of value env
+          (*| Let of value env *)
 
 
 let empty = []
@@ -65,6 +65,7 @@ let rec lookup str env = match env with
 (* val bind :  string -> 'a -> 'a env -> 'a env *)
 let bind str v env = (str, v) :: env
 
+let global_ref = ref empty
 
 (*   -- LIST Constructs --   *)
 
@@ -193,7 +194,10 @@ let rec typecheck env exp = match exp with
   | TupleC t -> TupleT (List.map (fun (x) -> typecheck env x) t)
   | ListC l -> ListT (listType (List.map (fun (x) -> typecheck env x) l))
   (*| FunC (str, lst, x) -> FunT (typecheck env x) (typecheck env x) ( need to figure out how to typecheck the arg list *)
+  (*| LetC str e1 -> (typecheck e1) *)
   | _ -> raise (Type "Unknown Type")
+
+(* Steps/help for Let statements in details file *)
 
 
 (* INTERPRETER *)
@@ -236,7 +240,8 @@ let rec interp env r = match r with
   | EqC (x, y)       ->  eqEval (interp env x) (interp env y)
   | ListC lst        -> List (List.map (interp env) lst)
   | TupleC lst       -> Tuple (List.map (interp env) lst)
-  | LetC (var, e1)         -> Let (bind var (interp env e1) env)
+  | LetC (var, e1)         -> let eval_e1 = (interp env e1) in
+                              let ref_v := (bind var env eval_e1)
   | FunC _                 -> Clos (r (* FunC *), env)
   | CallC (func, arg_lst)  ->
         let funct_val = (interp env func) in              (*  lookup args for func                          *)
@@ -247,7 +252,7 @@ let rec interp env r = match r with
                       | FunC (fname, arg_lst, body_expr) ->
 
                                 let new_env = bind_lsts (arg_lst, args_val, envr) in
-                                (interp (bind (fname, Clos (funct, envr), new_env)) body_expr)  -- recursive? 
+                                (*(interp (bind (fname, Clos (funct, envr), new_env)) body_expr)  -- recursive? *)
                                 (interp new_env body_expr)
                       | _ -> raise (Interp "Error: Not Previously Defined"))
               | _ -> raise (Interp "Error: Not a Function"))
@@ -256,7 +261,7 @@ let rec interp env r = match r with
 (* evaluate : exprC -> val *)
 let evaluate exprC =
   let typ = typecheck [] exprC
-    in let valu = interp [] exprC
+    in let valu = interp (!global_ref) exprC
       in (typ, valu)
 
 
