@@ -194,7 +194,8 @@ let rec typecheck env exp = match exp with
   | TupleC t -> TupleT (List.map (fun (x) -> typecheck env x) t)
   | ListC l -> ListT (listType (List.map (fun (x) -> typecheck env x) l))
   (*| FunC (str, lst, x) -> FunT (typecheck env x) (typecheck env x) ( need to figure out how to typecheck the arg list *)
-  (*| LetC str e1 -> (typecheck e1) *)
+  | LetC (str, e1) -> let typ_e1 = (typecheck global_ref e1) in
+                        (global_ref := (bind str typ_e1 global_ref); LetT (str, typ_e1))
   | _ -> raise (Type "Unknown Type")
 
 (* Steps/help for Let statements in details file *)
