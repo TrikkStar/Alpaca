@@ -35,7 +35,6 @@ type exprC = NumC of float
 type exprT = NumT
             | BoolT
             | AnyT
-            | LetT of string * exprT
             | ListT of exprT
             | TupleT of exprT list
             | FunT of exprT * exprT
