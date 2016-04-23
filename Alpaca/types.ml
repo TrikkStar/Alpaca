@@ -288,7 +288,7 @@ let rec typToString r = match r with
   | TupleT t ->
     (match t with
       | head :: rest -> typToString head ^ " * " ^ typToString (TupleT rest))
-  | LetT (str, e) -> "var: " ^ str ^ " -> " ^ typToString e
+  (* | LetT (str, e) -> "var: " ^ str ^ " -> " ^ typToString e *)
   | FunT (e1, e2) ->  typToString e1 ^ " -> " ^ typToString e2
 
 let outputToString (typ, valu) = (typToString typ) ^ " " ^ (valToString valu)
