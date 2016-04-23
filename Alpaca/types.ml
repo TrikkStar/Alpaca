@@ -67,6 +67,8 @@ let bind str v env = (str, v) :: env
 
 let global_ref = ref empty
 
+let static_ref = ref empty
+
 (*   -- LIST Constructs --   *)
 
 (* add element to the front of a list *)
@@ -194,8 +196,8 @@ let rec typecheck env exp = match exp with
   | TupleC t -> TupleT (List.map (fun (x) -> typecheck env x) t)
   | ListC l -> ListT (listType (List.map (fun (x) -> typecheck env x) l))
   (*| FunC (str, lst, x) -> FunT (typecheck env x) (typecheck env x) ( need to figure out how to typecheck the arg list *)
-  | LetC (str, e1) -> let typ_e1 = (typecheck global_ref e1) in
-                        (global_ref := (bind str typ_e1 global_ref); LetT (str, typ_e1))
+  | LetC (str, e1) -> let typ_e1 = (typecheck env e1) in
+                        (static_ref := (bind str typ_e1 env); typ_e1)
   | _ -> raise (Type "Unknown Type")
 
 (* Steps/help for Let statements in details file *)
@@ -261,7 +263,7 @@ let rec interp env r = match r with
 
 (* evaluate : exprC -> val *)
 let evaluate exprC =
-  let typ = typecheck [] exprC
+  let typ = typecheck (!static_ref) exprC
     in let valu = interp (!global_ref) exprC
       in (typ, valu)
 
